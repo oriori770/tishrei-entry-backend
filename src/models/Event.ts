@@ -1,7 +1,17 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import { Event } from '../types';
 
-export interface EventDocument extends Event, Document {}
+export interface EventDocument extends Document {
+  name: string;
+  date: Date;
+  description?: string;
+  isActive: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
+  formattedDate?: string;
+  isPast?: boolean;
+  isToday?: boolean;
+}
 
 const eventSchema = new Schema<EventDocument>({
   name: {

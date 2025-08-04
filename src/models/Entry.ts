@@ -1,7 +1,15 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import { Entry } from '../types';
 
-export interface EntryDocument extends Entry, Document {}
+export interface EntryDocument extends Document {
+  participantId: mongoose.Types.ObjectId;
+  eventId: mongoose.Types.ObjectId;
+  scannerId: mongoose.Types.ObjectId;
+  entryTime: Date;
+  method: 'barcode' | 'manual';
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 const entrySchema = new Schema<EntryDocument>({
   participantId: {

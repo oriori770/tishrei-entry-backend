@@ -6,7 +6,9 @@ import {
   getEntryById,
   deleteEntry,
   getEntriesByEvent,
-  getEntryStats
+  getEntryStats,
+  getGeneralEntryStats,
+  checkParticipantEntry
 } from '../controllers/entryController';
 import { authenticateToken, requireScanner, requireAdmin } from '../middleware/auth';
 
@@ -20,6 +22,8 @@ router.post('/', requireScanner, createEntry);
 router.post('/barcode', requireScanner, createEntryByBarcode);
 router.get('/event/:eventId', requireScanner, getEntriesByEvent);
 router.get('/stats/:eventId', requireScanner, getEntryStats);
+router.get('/stats', requireScanner, getGeneralEntryStats);
+router.get('/check/:participantId/:eventId', requireScanner, checkParticipantEntry);
 
 // Admin only routes
 router.get('/', requireAdmin, getAllEntries);

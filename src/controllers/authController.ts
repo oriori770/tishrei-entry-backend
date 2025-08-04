@@ -49,11 +49,11 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     const token = jwt.sign(
       { userId: user._id, role: user.role },
       process.env.JWT_SECRET || 'fallback-secret',
-      { expiresIn: process.env.JWT_EXPIRES_IN || '24h' }
+      { expiresIn: process.env.JWT_EXPIRES_IN || '24h' } as any
     );
 
     // Remove password from response
-    const userResponse = user.toObject();
+    const userResponse = user.toObject() as any;
     delete userResponse.password;
 
     const response: ApiResponse<LoginResponse> = {

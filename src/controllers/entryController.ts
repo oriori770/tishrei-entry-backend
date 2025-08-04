@@ -364,3 +364,70 @@ export const getEntryStats = async (req: Request, res: Response): Promise<void> 
     });
   }
 }; 
+
+export const checkParticipantEntry = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { participantId, eventId } = req.params;
+
+    const entry = await EntryModel.findOne({
+      participantId,
+      eventId
+    });
+
+    res.status(200).json({
+      success: true,
+      data: {
+        isCheckedIn: !!entry,
+        entry: entry ? await EntryModel.findById(entry._id)
+          .populate('participantId')
+          .populate('eventId')
+          .populate('scannerId', '-password') : null
+      }
+    });
+  } catch (error) {
+    console.error('Check participant entry error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'שגיאה בשרת'
+    });
+  }
+}; 
+
+export const getGeneralEntryStats = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const [totalEntries, entriesByMethod, recentEntries] = await Promise.all([
+      EntryModel.countDocuments(),
+      EntryModel.aggregate([
+        { $group: { _id: '$method', count: { $sum: 1 } } }
+      ]),
+      EntryModel.find()
+        .populate('participantId')
+        .populate('eventId')
+        .populate('scannerId', '-password')
+        .sort({ entryTime: -1 })
+        .limit(10)
+    ]);
+
+    const methodStats = entriesByMethod.reduce((acc: any, curr) => {
+      acc[curr._id] = curr.count;
+      return acc;
+    }, {});
+
+    res.status(200).json({
+      success: true,
+      data: {
+        totalEntries,
+        methodStats,
+        barcodeEntries: methodStats.barcode || 0,
+        manualEntries: methodStats.manual || 0,
+        recentEntries
+      }
+    });
+  } catch (error) {
+    console.error('Get general entry stats error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'שגיאה בשרת'
+    });
+  }
+}; 

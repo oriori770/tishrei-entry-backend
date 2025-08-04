@@ -1,7 +1,19 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import { Participant, GroupType } from '../types';
 
-export interface ParticipantDocument extends Participant, Document {}
+export interface ParticipantDocument extends Document {
+  name: string;
+  family: string;
+  barcode: string;
+  phone: string;
+  email: string;
+  city: string;
+  schoolClass: string;
+  branch: string;
+  groupType: GroupType;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
 
 const participantSchema = new Schema<ParticipantDocument>({
   name: {

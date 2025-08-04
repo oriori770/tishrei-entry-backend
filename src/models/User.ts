@@ -2,7 +2,7 @@ import mongoose, { Schema, Document } from 'mongoose';
 import bcrypt from 'bcryptjs';
 import { User, UserRole } from '../types';
 
-export interface UserDocument extends User, Document {
+export interface UserDocument extends Omit<User, '_id'>, Document {
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
@@ -38,14 +38,14 @@ const userSchema = new Schema<UserDocument>({
   timestamps: true,
   toJSON: { 
     virtuals: true,
-    transform: function(doc, ret) {
+    transform: function(doc, ret: any) {
       delete ret.password;
       return ret;
     }
   },
   toObject: { 
     virtuals: true,
-    transform: function(doc, ret) {
+    transform: function(doc, ret: any) {
       delete ret.password;
       return ret;
     }

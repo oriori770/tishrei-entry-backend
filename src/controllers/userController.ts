@@ -85,7 +85,7 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
 
     // Remove password from response
     const userResponse = user.toObject();
-    delete userResponse.password;
+    delete (userResponse as any).password;
 
     res.status(201).json({
       success: true,
@@ -216,7 +216,7 @@ export const toggleUserStatus = async (req: Request, res: Response): Promise<voi
     await user.save();
 
     const userResponse = user.toObject();
-    delete userResponse.password;
+    delete (userResponse as any).password;
 
     res.status(200).json({
       success: true,
