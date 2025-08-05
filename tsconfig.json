@@ -20,7 +20,7 @@
     "noFallthroughCasesInSwitch": true,
     "moduleResolution": "node",
     "baseUrl": "./",
-    "types": [],
+    "types": ["node"],
     "paths": {
       "@/*": ["src/*"]
     }
