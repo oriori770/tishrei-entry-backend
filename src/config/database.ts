@@ -16,6 +16,8 @@ function getEnv(name: string): string {
 //|| 'mongodb://localhost:27017/tishrei-entry';
 
 export const connectDB = async (): Promise<void> => {
+console.log('MONGODB_URI:', process.env.MONGODB_URI);
+console.log('env:', process.env);
   try {
     await mongoose.connect(MONGODB_URI);
     console.log('✅ MongoDB connected successfully');
