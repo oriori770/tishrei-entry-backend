@@ -49,7 +49,6 @@ entrySchema.index({ participantId: 1 });
 entrySchema.index({ eventId: 1 });
 entrySchema.index({ scannerId: 1 });
 entrySchema.index({ entryTime: 1 });
-entrySchema.index({ participantId: 1, eventId: 1 }); // Compound index for unique entries
 
 // Ensure unique participant per event (one entry per participant per event)
 entrySchema.index(
