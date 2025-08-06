@@ -34,8 +34,7 @@ app.use(limiter);
 
 // CORS configuration
 const corsOptions = {
-  origin: process.env.CORS_ORIGIN || 'http://localhost:5173' || 'http://localhost:8080',
-  credentials: true,
+  origin: '*',
   optionsSuccessStatus: 200
 };
 app.use(cors(corsOptions));
