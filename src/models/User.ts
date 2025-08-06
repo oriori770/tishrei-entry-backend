@@ -53,7 +53,6 @@ const userSchema = new Schema<UserDocument>({
 });
 
 // Indexes
-userSchema.index({ username: 1 });
 userSchema.index({ role: 1 });
 userSchema.index({ isActive: 1 });
 
