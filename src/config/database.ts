@@ -2,10 +2,18 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 
 dotenv.config();
-console.log('MONGODB_URI:', process.env.MONGODB_URI);
 
-console.log('env:', process.env);
-const MONGODB_URI = process.env.MONGODB_URI //|| 'mongodb://localhost:27017/tishrei-entry';
+
+function getEnv(name: string): string {
+  const value = process.env[name];
+  if (!value) {
+    throw new Error(`Environment variable ${name} is missing`);
+  }
+  return value;
+}
+
+const MONGODB_URI = getEnv('MONGODB_URI'
+//|| 'mongodb://localhost:27017/tishrei-entry';
 
 export const connectDB = async (): Promise<void> => {
   try {
