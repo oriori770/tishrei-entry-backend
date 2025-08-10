@@ -23,8 +23,8 @@ app.use(helmet());
 
 // Rate limiting
 const limiter = rateLimit({
-  windowMs: Number(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000, // 15 minutes
-  max: Number(process.env.RATE_LIMIT_MAX_REQUESTS) || 100, // limit each IP to 100 requests per windowMs
+  windowMs: Number(process.env.RATE_LIMIT_WINDOW_MS) || 1 * 60 * 1000, // 1 minute
+  max: Number(process.env.RATE_LIMIT_MAX_REQUESTS) || 500, // limit each IP to 100 requests per windowMs
   message: {
     success: false,
     error: 'יותר מדי בקשות, נסה שוב מאוחר יותר'
