@@ -6,9 +6,7 @@ import { LoginRequest, LoginResponse, ApiResponse } from '../types';
 export const login = async (req: Request, res: Response): Promise<void> => {
   try {
     const { username, password }: LoginRequest = req.body;
-    console.log("username password");
-    console.log(username, password);
-
+    
     // Validate input
     if (!username || !password) {
       res.status(400).json({

@@ -34,9 +34,25 @@ app.use(limiter);
 
 // CORS configuration
 const corsOptions = {
-  origin: '*',
-  optionsSuccessStatus: 200
+  origin: function (
+    origin: string | undefined,
+    callback: (err: Error | null, allow?: boolean) => void
+  ) {
+    if (!origin) {
+      // אם אין origin (למשל Postman, curl) — אפשר לאפשר
+      return callback(null, true);
+    }
+    const allowedOrigins = ['http://localhost:8080', 'https://tishrei-entry-guardian.vercel.app/'];
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  optionsSuccessStatus: 200,
 };
+
 app.use(cors(corsOptions));
 
 // Body parsing middleware
