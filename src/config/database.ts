@@ -13,7 +13,7 @@ function getEnv(name: string): string {
   return value;
 }
 
-  const MONGODB_URI = getEnv('MONGODB_URI') || 'mongodb://localhost:27017/tishrei-entry';
+  const MONGODB_URI = getEnv('MONGODB_URI_PROD') || 'mongodb://localhost:27017/tishrei-entry';
 
 export const connectDB = async (): Promise<void> => {
   try {
