@@ -42,7 +42,7 @@ const corsOptions = {
       // אם אין origin (למשל Postman, curl) — אפשר לאפשר
       return callback(null, true);
     }
-    const allowedOrigins = ['http://localhost:8080', 'https://tishrei-entry-guardian.vercel.app/'];
+    const allowedOrigins = ['http://localhost:8080', 'https://tishrei-entry-guardian.vercel.app'];
     if (allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
