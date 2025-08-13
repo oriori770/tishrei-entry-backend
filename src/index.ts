@@ -33,27 +33,32 @@ const limiter = rateLimit({
 app.use(limiter);
 
 // CORS configuration
+const allowedOrigins = [
+  'http://localhost:8080',
+  'http://127.0.0.1:8080',
+  'https://tishrei-entry-guardian.vercel.app',
+];
+
+// הגדרת CORS
 const corsOptions = {
-  origin: function (
-    origin: string | undefined,
-    callback: (err: Error | null, allow?: boolean) => void
-  ) {
-    if (!origin) {
-      // אם אין origin (למשל Postman, curl) — אפשר לאפשר
-      return callback(null, true);
-    }
-    const allowedOrigins = ['http://localhost:8080', 'https://tishrei-entry-guardian.vercel.app'];
-    if (allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
+  origin: function (origin: string | undefined, callback: any) {
+    if (!origin) return callback(null, true); // בקשות שלא מדפדפן (Postman, curl)
+    const isVercelPreview = /^https:\/\/tishrei-entry-guardian-.*\.vercel\.app$/.test(origin);
+    if (allowedOrigins.includes(origin) || isVercelPreview) return callback(null, true);
+    return callback(new Error('Not allowed by CORS'));
   },
-  credentials: true,
-  optionsSuccessStatus: 200,
+  credentials: false,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  preflightContinue: false,  // לא להמשיך ל־route אחרי OPTIONS
+  optionsSuccessStatus: 204, // סטטוס נכון ל־preflight
 };
 
+// הוספת ה‑middleware ל‑CORS לכל הבקשות
 app.use(cors(corsOptions));
+
+// טיפול אוטומטי בכל בקשות OPTIONS לכל הנתיבים
+app.options('*', cors(corsOptions));
 
 // Body parsing middleware
 app.use(express.json({ limit: '10mb' }));
