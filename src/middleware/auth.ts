@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload, TokenExpiredError } from "jsonwebtoken";
 import { UserModel } from '../models/User';
 import { UserRole } from '../types';
+
 
 interface AuthRequest extends Request {
   user?: any;
