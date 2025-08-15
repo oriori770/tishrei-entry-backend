@@ -34,6 +34,12 @@ export const authenticateToken = async (req: AuthRequest, res: Response, next: N
     req.user = user;
     next();
   } catch (error) {
+    if (error.name === 'TokenExpiredError') {
+    return res.status(401).json({
+      success: false,
+      error: 'הטוקן פג תוקף'
+    });
+  }
     res.status(403).json({ 
       success: false, 
       error: 'טוקן לא תקין' 
