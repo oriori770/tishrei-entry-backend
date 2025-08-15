@@ -26,7 +26,7 @@ export const authenticateToken = async (
 
     const decoded = jwt.verify(token, secret) as JwtPayload & { userId: string };
 
-    const user = await User.findById(decoded.userId).select("-password");
+    const user = await UserModel.findById(decoded.userId).select("-password");
     if (!user || !user.isActive) {
       res.status(401).json({ success: false, error: "משתמש לא נמצא או לא פעיל" });
       return;
