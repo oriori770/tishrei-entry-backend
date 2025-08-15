@@ -40,7 +40,7 @@ export const authenticateToken = async (req: AuthRequest, res: Response, next: N
       error: 'הטוקן פג תוקף'
     });
   }
-    res.status(403).json({ 
+    res.status(401).json({ 
       success: false, 
       error: 'טוקן לא תקין' 
     });
