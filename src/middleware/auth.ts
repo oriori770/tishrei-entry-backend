@@ -1,43 +1,45 @@
 import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload, TokenExpiredError } from "jsonwebtoken";
 import { UserModel } from '../models/User';
 import { UserRole } from '../types';
+
 
 interface AuthRequest extends Request {
   user?: any;
 }
 
-export const authenticateToken = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
+export const authenticateToken = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   try {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
-
-    if (!token) {
-      res.status(401).json({ 
-        success: false, 
-        error: 'נדרש טוקן אימות' 
-      });
+    const authHeader = req.headers.authorization;
+    if (!authHeader?.startsWith("Bearer ")) {
+      res.status(401).json({ success: false, error: "נדרש טוקן אימות" });
       return;
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback-secret') as any;
-    const user = await UserModel.findById(decoded.userId).select('-password');
+    const token = authHeader.split(" ")[1];
+    const secret = process.env.JWT_SECRET;
+    if (!secret) throw new Error("Missing JWT_SECRET");
 
+    const decoded = jwt.verify(token, secret) as JwtPayload & { userId: string };
+
+    const user = await UserModel.findById(decoded.userId).select("-password");
     if (!user || !user.isActive) {
-      res.status(401).json({ 
-        success: false, 
-        error: 'משתמש לא נמצא או לא פעיל' 
-      });
+      res.status(401).json({ success: false, error: "משתמש לא נמצא או לא פעיל" });
       return;
     }
 
     req.user = user;
     next();
-  } catch (error) {
-    res.status(403).json({ 
-      success: false, 
-      error: 'טוקן לא תקין' 
-    });
+  } catch (err: unknown) {
+    if (err instanceof TokenExpiredError) {
+      res.status(401).json({ success: false, error: "הטוקן פג תוקף" });
+    } else {
+      res.status(401).json({ success: false, error: "טוקן לא תקין" });
+    }
   }
 };
 
