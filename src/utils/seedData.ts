@@ -21,7 +21,7 @@ const seedData = async () => {
     if (!adminExists) {
       const adminUser = new UserModel({
         username: 'admin',
-        password: 'admin123',
+        password: 'admin770',
         name: 'מנהל ראשי',
         role: UserRole.Admin,
         isActive: true
@@ -37,7 +37,7 @@ const seedData = async () => {
     if (!scannerExists) {
       const scannerUser = new UserModel({
         username: 'scanner',
-        password: 'scanner123',
+        password: 'scanner770',
         name: 'סורק ראשי',
         role: UserRole.Scanner,
         isActive: true
@@ -106,6 +106,57 @@ const seedData = async () => {
         groupType: GroupType.HighSchool
       }
     ];
+
+    
+    // function generateParticipants(count: number) {
+    //   const firstNames = ["שרה", "רחל", "מרים", "יעל", "חנה", "אלישבע", "דבורה", "אסתר", "נעמי", "אביגיל"];
+    //   const lastNames = ["כהן", "לוי", "מizrahi", "גולדברג", "ברק", "פרידמן", "רוזן", "אלון", "קפלן", "שמש"];
+    //   const cities = ["ירושלים", "תל אביב", "חיפה", "באר שבע", "אשדוד", "נתניה", "פתח תקווה", "עפולה", "טבריה", "רמת גן"];
+    //   const branches = ["סניף מרכז", "סניף צפון", "סניף דרום", "סניף מזרח", "סניף מערב"];
+    //   const classes = ["י'", "י\"א", "י\"ב", "י\"ג"];
+    //   const groups = [GroupType.HighSchool,  GroupType.Seminar, GroupType.Women];
+    
+    //   const participants = Array.from({ length: count }, (_, i) => {
+    //     const name = firstNames[Math.floor(Math.random() * firstNames.length)];
+    //     const family = lastNames[Math.floor(Math.random() * lastNames.length)];
+    //     const city = cities[Math.floor(Math.random() * cities.length)];
+    //     const branch = branches[Math.floor(Math.random() * branches.length)];
+    //     const schoolClass = classes[Math.floor(Math.random() * classes.length)];
+    //     const groupType = groups[Math.floor(Math.random() * groups.length)];
+    
+    //     const barcode = (Math.floor(100000000 + Math.random() * 900000000)).toString();
+    //     const phone = `05${Math.floor(Math.random() * 5)}-${Math.floor(1000000 + Math.random() * 9000000)}`;
+    //     const email = `${transliterate(name)}.${transliterate(family)}${i}@example.com`.toLowerCase();
+    
+    //     return {
+    //       name,
+    //       family,
+    //       barcode,
+    //       phone,
+    //       email,
+    //       city,
+    //       schoolClass,
+    //       branch,
+    //       groupType
+    //     };
+    //   });
+    
+    //   return participants;
+    // }
+    
+    // // פונקציה פשוטה להמרת עברית ללטינית למייל
+    // function transliterate(text: string) {
+    //   const map: Record<string, string> = {
+    //     "א": "a", "ב": "b", "ג": "g", "ד": "d", "ה": "h", "ו": "v", "ז": "z", "ח": "ch", "ט": "t",
+    //     "י": "y", "כ": "k", "ל": "l", "מ": "m", "נ": "n", "ס": "s", "ע": "a", "פ": "p", "צ": "tz",
+    //     "ק": "k", "ר": "r", "ש": "sh", "ת": "t", " ": ""
+    //   };
+    //   return text.split("").map(c => map[c] || c).join("");
+    // }
+    
+    // // שימוש:
+    // const participants = generateParticipants(400);
+    
     
     for (const participantData of participants) {
       const exists = await ParticipantModel.findOne({ barcode: participantData.barcode });
