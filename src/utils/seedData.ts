@@ -114,7 +114,8 @@ const seedData = async () => {
     //   const cities = ["ירושלים", "תל אביב", "חיפה", "באר שבע", "אשדוד", "נתניה", "פתח תקווה", "עפולה", "טבריה", "רמת גן"];
     //   const branches = ["סניף מרכז", "סניף צפון", "סניף דרום", "סניף מזרח", "סניף מערב"];
     //   const classes = ["י'", "י\"א", "י\"ב", "י\"ג"];
-    //   const groups = [GroupType.HighSchool,  GroupType.Seminar, GroupType.Women];
+    //   const groups = [GroupType.HighSchoolFullMonth,  GroupType.SeminarFullMonth, GroupType.HighSchoolHalfMonth, GroupType.SeminarHalfMonth, GroupType.Women ];
+    
     
     //   const participants = Array.from({ length: count }, (_, i) => {
     //     const name = firstNames[Math.floor(Math.random() * firstNames.length)];
