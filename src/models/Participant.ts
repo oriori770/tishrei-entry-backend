@@ -41,6 +41,7 @@ const participantSchema = new Schema<ParticipantDocument>({
     type: String,
     required: [true, 'אימייל הוא שדה חובה'],
     lowercase: true,
+    unique: true,
     trim: true
   },
   city: {
