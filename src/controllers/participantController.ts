@@ -81,8 +81,19 @@ export const getParticipantById = async (req: Request, res: Response): Promise<v
   }
 };
 
+
 export const createParticipant = async (req: Request, res: Response): Promise<void> => {
   try {
+    // קבלת כל השדות מסוג String מה-scheme
+    Object.entries(participantSchema.paths).forEach(([key, path]: [string, any]) => {
+      if (path.instance === 'String' && req.body[key]) {
+        req.body[key] = req.body[key].trim();
+        if (key === 'email') {
+          req.body[key] = req.body[key].toLowerCase();
+        }
+      }
+    });
+
     const participant = new ParticipantModel(req.body);
     await participant.save();
 
@@ -93,11 +104,12 @@ export const createParticipant = async (req: Request, res: Response): Promise<vo
     });
   } catch (error: any) {
     console.error('Create participant error:', error);
-    
+
     if (error.code === 11000) {
+      const duplicatedField = Object.keys(error.keyValue)[0];
       res.status(400).json({
         success: false,
-        error: 'ברקוד או אימייל זה כבר קיים במערכת'
+        error: `השדה "${duplicatedField}" כבר קיים במערכת`
       });
       return;
     }
