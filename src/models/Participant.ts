@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose';
-import { Participant, GroupType } from '../types';
+import { GroupType } from '../types';
 import { v4 as uuidv4 } from 'uuid';
 
 export interface Participant extends Document {
