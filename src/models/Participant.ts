@@ -1,5 +1,6 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import { Participant, GroupType } from '../types';
+import { v4 as uuidv4 } from 'uuid';
 
 export interface ParticipantDocument extends Document {
   name: string;
@@ -68,17 +69,14 @@ participantSchema.virtual('fullName').get(function() {
   return `${this.name} ${this.family}`;
 });
 
-// Pre-save middleware to ensure unique barcode
-participantSchema.pre('save', async function(next) {
-  if (this.isModified('barcode')) {
-    const existingParticipant = await mongoose.model('Participant').findOne({ 
-      barcode: this.barcode,
-      _id: { $ne: this._id }
-    });
-    
-    if (existingParticipant) {
-      throw new Error('ברקוד זה כבר קיים במערכת');
-    }
+participantSchema.pre('save', function (next) {
+  if (!this.barcode) {
+    const data = {
+      id: uuidv4(),
+      name: this.fullName,  // משתמש ב-virtual fullName
+      email: this.email
+    };
+    this.barcode = JSON.stringify(data);
   }
   next();
 });
