@@ -48,72 +48,13 @@ const seedData = async () => {
       console.log('ℹ️ Scanner user already exists');
     }
     
-    // Create sample participants
-    const participants = [
-      {
-        name: 'ישראל',
-        family: 'כהן',
-        barcode: '123456789',
-        phone: '050-1234567',
-        email: 'israel.cohen@example.com',
-        city: 'ירושלים',
-        schoolClass: 'י"ב',
-        branch: 'סניף מרכז',
-        groupType: GroupType.HighSchool
-      },
-      {
-        name: 'שרה',
-        family: 'לוי',
-        barcode: '987654321',
-        phone: '052-7654321',
-        email: 'sarah.levi@example.com',
-        city: 'תל אביב',
-        schoolClass: 'י"א',
-        branch: 'סניף צפון',
-        groupType: GroupType.HighSchool
-      },
-      {
-        name: 'משה',
-        family: 'גולדברג',
-        barcode: '456789123',
-        phone: '054-9876543',
-        email: 'moshe.goldberg@example.com',
-        city: 'חיפה',
-        schoolClass: 'י"ג',
-        branch: 'סניף דרום',
-        groupType: GroupType.Seminar
-      },
-      {
-        name: 'רחל',
-        family: 'ברק',
-        barcode: '789123456',
-        phone: '053-4567890',
-        email: 'rachel.barak@example.com',
-        city: 'באר שבע',
-        schoolClass: 'י"ב',
-        branch: 'סניף מרכז',
-        groupType: GroupType.Women
-      },
-      {
-        name: 'דוד',
-        family: 'רוזן',
-        barcode: '321654987',
-        phone: '055-3216549',
-        email: 'david.rozen@example.com',
-        city: 'אשדוד',
-        schoolClass: 'י"א',
-        branch: 'סניף דרום',
-        groupType: GroupType.HighSchool
-      }
-    ];
+    
 
     
     // function generateParticipants(count: number) {
     //   const firstNames = ["שרה", "רחל", "מרים", "יעל", "חנה", "אלישבע", "דבורה", "אסתר", "נעמי", "אביגיל"];
     //   const lastNames = ["כהן", "לוי", "מizrahi", "גולדברג", "ברק", "פרידמן", "רוזן", "אלון", "קפלן", "שמש"];
-    //   const cities = ["ירושלים", "תל אביב", "חיפה", "באר שבע", "אשדוד", "נתניה", "פתח תקווה", "עפולה", "טבריה", "רמת גן"];
-    //   const branches = ["סניף מרכז", "סניף צפון", "סניף דרום", "סניף מזרח", "סניף מערב"];
-    //   const classes = ["י'", "י\"א", "י\"ב", "י\"ג"];
+    //   const cities = ["ירושלים", "תל אביב", "חיפה", "באר שבע", "אשדוד", "נתניה", "פתח תקווה", "עפולה", "טבריה", "רמת גן״];
     //   const groups = [GroupType.HighSchoolFullMonth,  GroupType.SeminarFullMonth, GroupType.HighSchoolHalfMonth, GroupType.SeminarHalfMonth, GroupType.Women ];
     
     
@@ -121,23 +62,16 @@ const seedData = async () => {
     //     const name = firstNames[Math.floor(Math.random() * firstNames.length)];
     //     const family = lastNames[Math.floor(Math.random() * lastNames.length)];
     //     const city = cities[Math.floor(Math.random() * cities.length)];
-    //     const branch = branches[Math.floor(Math.random() * branches.length)];
-    //     const schoolClass = classes[Math.floor(Math.random() * classes.length)];
     //     const groupType = groups[Math.floor(Math.random() * groups.length)];
-    
-    //     const barcode = (Math.floor(100000000 + Math.random() * 900000000)).toString();
     //     const phone = `05${Math.floor(Math.random() * 5)}-${Math.floor(1000000 + Math.random() * 9000000)}`;
     //     const email = `${transliterate(name)}.${transliterate(family)}${i}@example.com`.toLowerCase();
     
     //     return {
     //       name,
     //       family,
-    //       barcode,
     //       phone,
     //       email,
     //       city,
-    //       schoolClass,
-    //       branch,
     //       groupType
     //     };
     //   });
