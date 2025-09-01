@@ -87,18 +87,15 @@ export const createParticipant = async (req: Request, res: Response): Promise<vo
     Object.entries(ParticipantModel.schema.paths).forEach(([key, path]: [string, any]) => {
       if (path.instance === 'String' && req.body[key]) {
         req.body[key] = req.body[key].trim();
-        if (key === 'email') {
-          req.body[key] = req.body[key].toLowerCase();
-        }
       }
     });
 
     // בדיקה אם כבר קיים משתתף עם אותו אימייל
-    const existing = await ParticipantModel.findOne({ email: req.body.email });
+    const existing = await ParticipantModel.findOne({ phone: req.body.phone });
     if (existing) {
       res.status(400).json({
         success: false,
-        error: `משתתף עם האימייל "${req.body.email}" כבר קיים במערכת`
+        error: `משתתף עם האימייל "${req.body.phone}" כבר קיים במערכת`
       });
       return;
     }
