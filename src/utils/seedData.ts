@@ -88,7 +88,7 @@ function transliterate(text: string) {
 
 const participants = generateParticipants(400);    
     for (const participantData of participants) {
-      const exists = await ParticipantModel.findOne({ barcode: participantData.barcode });
+      const exists = await ParticipantModel.findOne({ phone: participantData.phone });
       if (!exists) {
         const participant = new ParticipantModel(participantData);
         await participant.save();
