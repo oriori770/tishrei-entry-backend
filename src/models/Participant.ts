@@ -8,8 +8,6 @@ export interface ParticipantDocument extends Document {
   phone: string;
   email: string;
   city: string;
-  schoolClass: string;
-  branch: string;
   groupType: GroupType;
   createdAt?: Date;
   updatedAt?: Date;
@@ -47,16 +45,6 @@ const participantSchema = new Schema<ParticipantDocument>({
   city: {
     type: String,
     required: [true, 'עיר היא שדה חובה'],
-    trim: true
-  },
-  schoolClass: {
-    type: String,
-    required: [true, 'כיתה היא שדה חובה'],
-    trim: true
-  },
-  branch: {
-    type: String,
-    required: [true, 'סניף הוא שדה חובה'],
     trim: true
   },
   groupType: {
