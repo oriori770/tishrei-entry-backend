@@ -36,6 +36,7 @@ const participantSchema = new Schema<ParticipantDocument>({
   phone: {
     type: String,
     required: [true, 'טלפון הוא שדה חובה'],
+    unique: true,
     trim: true
   },
   email: {
@@ -62,7 +63,7 @@ const participantSchema = new Schema<ParticipantDocument>({
 });
 
 // Indexes for better performance
-participantSchema.createIndex({ email: 1 }, { unique: true })
+participantSchema.index({ phone: 1 }, { unique: true });
 
 // Virtual for full name
 participantSchema.virtual('fullName').get(function() {
