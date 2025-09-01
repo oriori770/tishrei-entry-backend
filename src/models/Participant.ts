@@ -2,7 +2,7 @@ import mongoose, { Schema, Document } from 'mongoose';
 import { Participant, GroupType } from '../types';
 import { v4 as uuidv4 } from 'uuid';
 
-export interface ParticipantDocument extends Document {
+export interface Participant extends Document {
   name: string;
   family: string;
   barcode: string;
@@ -12,6 +12,9 @@ export interface ParticipantDocument extends Document {
   groupType: GroupType;
   createdAt?: Date;
   updatedAt?: Date;
+}
+export interface ParticipantDocument extends Participant, Document {
+  fullName: string;
 }
 
 const participantSchema = new Schema<ParticipantDocument>({
