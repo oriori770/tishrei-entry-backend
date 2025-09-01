@@ -50,49 +50,43 @@ const seedData = async () => {
     
     
 
-    
-    // function generateParticipants(count: number) {
-    //   const firstNames = ["שרה", "רחל", "מרים", "יעל", "חנה", "אלישבע", "דבורה", "אסתר", "נעמי", "אביגיל"];
-    //   const lastNames = ["כהן", "לוי", "מizrahi", "גולדברג", "ברק", "פרידמן", "רוזן", "אלון", "קפלן", "שמש"];
-    //   const cities = ["ירושלים", "תל אביב", "חיפה", "באר שבע", "אשדוד", "נתניה", "פתח תקווה", "עפולה", "טבריה", "רמת גן״];
-    //   const groups = [GroupType.HighSchoolFullMonth,  GroupType.SeminarFullMonth, GroupType.HighSchoolHalfMonth, GroupType.SeminarHalfMonth, GroupType.Women ];
-    
-    
-    //   const participants = Array.from({ length: count }, (_, i) => {
-    //     const name = firstNames[Math.floor(Math.random() * firstNames.length)];
-    //     const family = lastNames[Math.floor(Math.random() * lastNames.length)];
-    //     const city = cities[Math.floor(Math.random() * cities.length)];
-    //     const groupType = groups[Math.floor(Math.random() * groups.length)];
-    //     const phone = `05${Math.floor(Math.random() * 5)}-${Math.floor(1000000 + Math.random() * 9000000)}`;
-    //     const email = `${transliterate(name)}.${transliterate(family)}${i}@example.com`.toLowerCase();
-    
-    //     return {
-    //       name,
-    //       family,
-    //       phone,
-    //       email,
-    //       city,
-    //       groupType
-    //     };
-    //   });
-    
-    //   return participants;
-    // }
-    
-    // // פונקציה פשוטה להמרת עברית ללטינית למייל
-    // function transliterate(text: string) {
-    //   const map: Record<string, string> = {
-    //     "א": "a", "ב": "b", "ג": "g", "ד": "d", "ה": "h", "ו": "v", "ז": "z", "ח": "ch", "ט": "t",
-    //     "י": "y", "כ": "k", "ל": "l", "מ": "m", "נ": "n", "ס": "s", "ע": "a", "פ": "p", "צ": "tz",
-    //     "ק": "k", "ר": "r", "ש": "sh", "ת": "t", " ": ""
-    //   };
-    //   return text.split("").map(c => map[c] || c).join("");
-    // }
-    
-    // // שימוש:
-    // const participants = generateParticipants(400);
-    
-    
+function generateParticipants(count: number) {
+  const firstNames = ["שרה", "רחל", "מרים", "יעל", "חנה", "אלישבע", "דבורה", "אסתר", "נעמי", "אביגיל"];
+  const lastNames = ["כהן", "לוי", "מizrahi", "גולדברג", "ברק", "פרידמן", "רוזן", "אלון", "קפלן", "שמש"];
+  const cities = ["ירושלים", "תל אביב", "חיפה", "באר שבע", "אשדוד", "נתניה", "פתח תקווה", "עפולה", "טבריה", "רמת גן"];
+  const groups = [GroupType.HighSchoolFullMonth, GroupType.SeminarFullMonth, GroupType.HighSchoolHalfMonth, GroupType.SeminarHalfMonth, GroupType.Women];
+
+  const participants = Array.from({ length: count }, (_, i) => {
+    const name = firstNames[Math.floor(Math.random() * firstNames.length)];
+    const family = lastNames[Math.floor(Math.random() * lastNames.length)];
+    const city = cities[Math.floor(Math.random() * cities.length)];
+    const groupType = groups[Math.floor(Math.random() * groups.length)];
+    const phone = `05${Math.floor(Math.random() * 5)}-${Math.floor(1000000 + Math.random() * 9000000)}`;
+    const email = `${transliterate(name)}.${transliterate(family)}${i}@example.com`.toLowerCase();
+
+    return {
+      name,
+      family,
+      phone,
+      email,
+      city,
+      groupType
+    };
+  });
+
+  return participants;
+}
+
+function transliterate(text: string) {
+  const map: Record<string, string> = {
+    "א": "a", "ב": "b", "ג": "g", "ד": "d", "ה": "h", "ו": "v", "ז": "z", "ח": "ch", "ט": "t",
+    "י": "y", "כ": "k", "ל": "l", "מ": "m", "נ": "n", "ס": "s", "ע": "a", "פ": "p", "צ": "tz",
+    "ק": "k", "ר": "r", "ש": "sh", "ת": "t", " ": ""
+  };
+  return text.split("").map(c => map[c] || c).join("");
+}
+
+const participants = generateParticipants(400);    
     for (const participantData of participants) {
       const exists = await ParticipantModel.findOne({ barcode: participantData.barcode });
       if (!exists) {
