@@ -62,9 +62,7 @@ const participantSchema = new Schema<ParticipantDocument>({
 });
 
 // Indexes for better performance
-participantSchema.index({ email: 1 });
-participantSchema.index({ groupType: 1 });
-participantSchema.index({ branch: 1 });
+participantSchema.createIndex({ email: 1 }, { unique: true })
 
 // Virtual for full name
 participantSchema.virtual('fullName').get(function() {
