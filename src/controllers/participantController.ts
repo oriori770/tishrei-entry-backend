@@ -80,11 +80,10 @@ export const getParticipantById = async (req: Request, res: Response): Promise<v
     });
   }
 };
-
-
+    
 export const createParticipant = async (req: Request, res: Response): Promise<void> => {
   try {
-    // קבלת כל השדות מסוג String מה-scheme
+    // ניקוי כל השדות מסוג String מה-scheme
     Object.entries(ParticipantModel.schema.paths).forEach(([key, path]: [string, any]) => {
       if (path.instance === 'String' && req.body[key]) {
         req.body[key] = req.body[key].trim();
@@ -94,6 +93,17 @@ export const createParticipant = async (req: Request, res: Response): Promise<vo
       }
     });
 
+    // בדיקה אם כבר קיים משתתף עם אותו אימייל
+    const existing = await ParticipantModel.findOne({ email: req.body.email });
+    if (existing) {
+      res.status(400).json({
+        success: false,
+        error: `משתתף עם האימייל "${req.body.email}" כבר קיים במערכת`
+      });
+      return;
+    }
+
+    // יצירת משתתף חדש
     const participant = new ParticipantModel(req.body);
     await participant.save();
 
@@ -102,17 +112,9 @@ export const createParticipant = async (req: Request, res: Response): Promise<vo
       data: participant,
       message: 'משתתף נוצר בהצלחה'
     });
+
   } catch (error: any) {
     console.error('Create participant error:', error);
-
-    if (error.code === 11000) {
-      const duplicatedField = Object.keys(error.keyValue)[0];
-      res.status(400).json({
-        success: false,
-        error: `השדה "${duplicatedField}" כבר קיים במערכת`
-      });
-      return;
-    }
 
     if (error.name === 'ValidationError') {
       const errors = Object.values(error.errors).map((err: any) => err.message);
