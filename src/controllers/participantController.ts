@@ -85,7 +85,7 @@ export const getParticipantById = async (req: Request, res: Response): Promise<v
 export const createParticipant = async (req: Request, res: Response): Promise<void> => {
   try {
     // קבלת כל השדות מסוג String מה-scheme
-    Object.entries(participantSchema.paths).forEach(([key, path]: [string, any]) => {
+    Object.entries(ParticipantModel.paths).forEach(([key, path]: [string, any]) => {
       if (path.instance === 'String' && req.body[key]) {
         req.body[key] = req.body[key].trim();
         if (key === 'email') {
