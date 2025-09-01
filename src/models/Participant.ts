@@ -30,7 +30,6 @@ const participantSchema = new Schema<ParticipantDocument>({
   },
   barcode: {
     type: String,
-    required: [true, 'ברקוד הוא שדה חובה'],
     unique: true,
     trim: true
   },
