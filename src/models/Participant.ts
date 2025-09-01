@@ -73,12 +73,7 @@ participantSchema.virtual('fullName').get(function() {
 
 participantSchema.pre('save', function (next) {
   if (!this.barcode) {
-    const data = {
-      id: uuidv4(),
-      name: this.fullName,  // משתמש ב-virtual fullName
-      email: this.email
-    };
-    this.barcode = JSON.stringify(data);
+    this.barcode = uuidv4(); // שמור רק UUID
   }
   next();
 });
