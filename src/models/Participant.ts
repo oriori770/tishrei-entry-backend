@@ -39,16 +39,8 @@ const participantSchema = new Schema<ParticipantDocument>({
     unique: true,
     trim: true
   },
-  email: {
-    type: String,
-    required: [true, 'אימייל הוא שדה חובה'],
-    lowercase: true,
-    unique: true,
-    trim: true
-  },
   city: {
     type: String,
-    required: [true, 'עיר היא שדה חובה'],
     trim: true
   },
   groupType: {
