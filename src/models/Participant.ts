@@ -44,7 +44,7 @@ const participantSchema = new Schema<ParticipantDocument>({
   },
   groupType: {
     type: String,
-    enum: Object.values(GroupType),
+    //enum: Object.values(GroupType),
     required: [true, 'סוג קבוצה הוא שדה חובה']
   }
 }, {
