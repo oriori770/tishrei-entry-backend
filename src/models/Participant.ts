@@ -35,7 +35,6 @@ const participantSchema = new Schema<ParticipantDocument>({
   phone: {
     type: String,
     required: [true, 'טלפון הוא שדה חובה'],
-    unique: true,
     trim: true
   },
   city: {

@@ -49,17 +49,6 @@ const seedData = async () => {
       console.log('ℹ️ Scanner user already exists');
     }
 
-    // כאן ניתן להוסיף את פונקציית יצירת המשתתפים והאירועים לפי הצורך
-    // הערות או דוגמאות:
-
-    /*
-    function generateParticipants(count: number) { ... }
-    const participants = generateParticipants(400);
-    for (const participantData of participants) { ... }
-
-    const events = [ ... ];
-    for (const eventData of events) { ... }
-    */
 
     console.log('🎉 Database seeding completed successfully!');
     console.log('\n📋 Default credentials:');
