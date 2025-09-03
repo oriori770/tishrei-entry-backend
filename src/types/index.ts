@@ -1,14 +1,11 @@
 // טיפוסים עבור השרת - מערכת ניהול רישום וכניסות
 
 export enum GroupType {
-  Seminar = "סמינר", // TODO: לשנות ל "סמינר חודש מלא" / "סמינר חצי חודש"
-  HighSchool = "תיכון", // TODO: לשנות ל "תיכון חודש מלא" / "תיכון חצי חודש"
-  Women = "נשים",
-
-  HighSchoolFullMonth = "תיכון חודש מלא",
-  HighSchoolHalfMonth = "תיכון חצי חודש",
-  SeminarFullMonth = "סמינר חודש מלא",
-  SeminarHalfMonth = "סמינר חצי חודש",
+  HighSchoolFullMonth = "תיכון תכניות חודש מלא",
+  HighSchoolPartialAfterYom = "חודש חלקי (אחרי יו״כ)",
+  ApartmentPlusPrograms = "דירה + תכניות",
+  SeminarFullMonth = "סמינר - תכניות חודש מלא",
+  SeminarAfterYom = "סמינר - תכניות אחרי יו״כ",
 }
 
 export enum UserRole {
