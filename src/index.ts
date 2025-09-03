@@ -32,7 +32,7 @@ const limiter = rateLimit({
     error: 'יותר מדי בקשות, נסה שוב מאוחר יותר'
   }
 });
-app.use(limiter);
+// app.use(limiter);
 
 
 

@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { ParticipantModel } from '../models/Participant';
 import { ApiResponse, PaginationParams, PaginatedResponse } from '../types';
 
-export const getAllParticipants = async (req: Request, res: Response): Promise<void> => {
+export const getAllParticipantsWithPaginationAndSearch = async (req: Request, res: Response): Promise<void> => {
   try {
     const { page = 1, limit = 10, sortBy = 'createdAt', sortOrder = 'desc', search } = req.query as PaginationParams & { search?: string };
 
@@ -55,6 +55,36 @@ export const getAllParticipants = async (req: Request, res: Response): Promise<v
   }
 };
 
+
+
+export const getAllParticipants = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { sortBy = "createdAt", sortOrder = "desc" } = req.query as {
+      sortBy?: string;
+      sortOrder?: string;
+    };
+
+    const sort: any = { [sortBy]: sortOrder === "desc" ? -1 : 1 };
+
+    // מחזיר את כולם, בלי חיפוש ובלי עמודים
+    const participants = await ParticipantModel.find().sort(sort);
+
+    const response: ApiResponse<any[]> = {
+      success: true,
+      data: participants,
+    };
+
+    res.status(200).json(response);
+  } catch (error) {
+    console.error("Get all participants (raw) error:", error);
+    res.status(500).json({
+      success: false,
+      error: "שגיאה בשרת",
+    });
+  }
+};
+
+
 export const getParticipantById = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
@@ -93,7 +123,7 @@ export const createParticipant = async (req: Request, res: Response): Promise<vo
     // בדיקה אם כבר קיים משתתף עם אותו אימייל
     const existing = await ParticipantModel.findOne({ phone: req.body.phone });
     if (existing) {
-      res.status(400).json({
+      res.status(409).json({
         success: false,
         error: `משתתף עם האימייל "${req.body.phone}" כבר קיים במערכת`
       });
