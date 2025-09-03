@@ -5,17 +5,17 @@ import { EventModel } from '../models/Event';
 import { UserRole, GroupType } from '../types';
 
 const seedData = async () => {
-  /*
+  
   try {
     console.log('🌱 Starting database seeding...');
     
-    // Connect to database
+    Connect to database
     await connectDB();
     
-    // Clear existing data (optional - be careful in production!)
-    // await UserModel.deleteMany({});
-    // await ParticipantModel.deleteMany({});
-    // await EventModel.deleteMany({});
+    Clear existing data (optional - be careful in production!)
+    await UserModel.deleteMany({});
+    await ParticipantModel.deleteMany({});
+    await EventModel.deleteMany({});
     
     // Create admin user
     const adminExists = await UserModel.findOne({ username: 'admin' });
@@ -48,7 +48,7 @@ const seedData = async () => {
     } else {
       console.log('ℹ️ Scanner user already exists');
     }
-    
+    /*
     function generateParticipants(count: number) {
       const firstNames = ["שרה", "רחל", "מרים", "יעל", "חנה", "אלישבע", "דבורה", "אסתר", "נעמי", "אביגיל"];
       const lastNames = ["כהן", "לוי", "מizrahi", "גולדברג", "ברק", "פרידמן", "רוזן", "אלון", "קפלן", "שמש"];
@@ -129,6 +129,7 @@ const seedData = async () => {
         console.log(`ℹ️ Event "${eventData.name}" already exists`);
       }
     }
+*/
     
     console.log('🎉 Database seeding completed successfully!');
     console.log('\n📋 Default credentials:');
@@ -141,12 +142,12 @@ const seedData = async () => {
     await disconnectDB();
     process.exit(0);
   }
-  */
+  
 };
 
 // Run seeding if this file is executed directly
 if (require.main === module) {
   seedData();
-}
-
+};
+seedData();
 export default seedData;
