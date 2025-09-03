@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
 import { connectDB } from './config/database';
+import { seedData } from './utils/seedData';
 
 // Import routes
 import authRoutes from './routes/auth';
@@ -33,6 +34,14 @@ const limiter = rateLimit({
   }
 });
 app.use(limiter);
+
+//למחוק זה רק זמני
+seedData().then(() => {
+  console.log("Database seeded successfully!");
+}).catch(err => {
+  console.error("Error seeding database:", err);
+});
+
 
 // CORS configuration
 const allowedOrigins = [
