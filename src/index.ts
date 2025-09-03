@@ -4,7 +4,7 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
 import { connectDB } from './config/database';
-import { seedData } from './utils/seedData';
+import seedData from './utils/seedData';
 
 // Import routes
 import authRoutes from './routes/auth';
