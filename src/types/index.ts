@@ -2,10 +2,11 @@
 
 export enum GroupType {
   HighSchoolFullMonth = "תיכון תכניות חודש מלא",
-  HighSchoolPartialAfterYom = "חודש חלקי (אחרי יו״כ)",
+  HighSchoolPartialAfterYom = "חודש חלקי (אחרי יוכ\"פ)",
   ApartmentPlusPrograms = "דירה + תכניות",
   SeminarFullMonth = "סמינר - תכניות חודש מלא",
-  SeminarAfterYom = "סמינר - תכניות אחרי יו״כ",
+  SeminarAfterYom = "סמינר - תכניות אחרי יוכ\"פ",
+  Women = "נשים",  // הוספנו כאן
 }
 
 export enum UserRole {
