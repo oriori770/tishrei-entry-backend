@@ -7,8 +7,7 @@ export interface Participant extends Document {
   family: string;
   barcode: string;
   phone: string;
-  email: string;
-  city: string;
+  city?: string;
   groupType: GroupType;
   createdAt?: Date;
   updatedAt?: Date;
