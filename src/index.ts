@@ -80,12 +80,13 @@ app.options('*', cors(corsOptions));
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
 
-app.use((req, res, next) => {
+app.use((req: express.Request, res: express.Response, next: express.NextFunction): void => {
   if (req.method === 'OPTIONS') {
     console.log('⚡ OPTIONS fallback triggered:', req.originalUrl);
-    return res.sendStatus(200); // או 204
+    res.sendStatus(200); // לא חייב return כאן כי void
+    return; // מוודא שהפונקציה מסתיימת
   }
-  next();
+  next(); // גם כאן הפונקציה מסתיימת
 });
 
 // Body parsing middleware
