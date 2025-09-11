@@ -20,6 +20,27 @@ const app = express();
 app.set("trust proxy", 1);
 const PORT = process.env.PORT || 3001;
 
+
+// Body parsing middleware
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
+
+// 🔍 Debug middleware - מדפיס בקשה נכנסת כאובייקט אחד
+app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
+  const requestInfo = {
+    method: req.method,
+    url: req.originalUrl,
+    headers: req.headers,
+    body: req.body,
+    query: req.query,
+    timestamp: new Date().toISOString(),
+  };
+
+  console.log("📥 Request received:", JSON.stringify(requestInfo, null, 2));
+  next();
+});
+
+
 // Security middleware
 app.use(helmet());
 
@@ -81,9 +102,6 @@ app.use(
   }
 );
 
-// Body parsing middleware
-app.use(express.json({ limit: "10mb" }));
-app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
 // Health check endpoint
 app.get("/health", (req, res) => {
