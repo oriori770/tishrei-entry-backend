@@ -35,6 +35,16 @@ const limiter = rateLimit({
 // app.use(limiter);
 
 
+app.use((req, res, next) => {
+  if (req.method === 'OPTIONS') {
+    console.log('🔎 OPTIONS request received:', {
+      url: req.originalUrl,
+      origin: req.headers.origin,
+      headers: req.headers,
+    });
+  }
+  next();
+});
 
 
 // CORS configuration
@@ -43,6 +53,8 @@ const allowedOrigins = [
   'http://127.0.0.1:8080',
   'https://tishrei-entry-guardian.vercel.app',
 ];
+
+
 
 // הגדרת CORS
 const corsOptions = {
