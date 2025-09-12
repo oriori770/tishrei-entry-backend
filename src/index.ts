@@ -20,6 +20,11 @@ const app = express();
 app.set("trust proxy", 1);
 const PORT = process.env.PORT || 3001;
 
+// לוג כל בקשה נכנסת
+app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl} - UA: ${req.headers["user-agent"]}`);
+  next();
+});
 
 // Body parsing middleware
 app.use(express.json({ limit: "10mb" }));
