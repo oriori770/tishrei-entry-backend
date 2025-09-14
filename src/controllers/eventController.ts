@@ -4,7 +4,7 @@ import { ApiResponse, PaginationParams, PaginatedResponse } from '../types';
 
 export const getAllEvents = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { page = 1, limit = 10, sortBy = 'date', sortOrder = 'desc', isActive } = req.query as PaginationParams & { isActive?: string };
+    const { page = 1, limit = 100, sortBy = 'date', sortOrder = 'desc', isActive } = req.query as PaginationParams & { isActive?: string };
 
     const query: any = {};
     
