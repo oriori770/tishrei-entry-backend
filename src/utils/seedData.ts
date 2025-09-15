@@ -73,11 +73,12 @@ const managers = [
   { username: "achotshri", name: "מוקד אחותשרי" },
 ];
 
+
 const scanners: { username: string; name: string }[] = [];
 
 async function seedUsers() {
   const usersByRole: { role: UserRole; users: { username: string; name: string }[] }[] = [
-    { role: UserRole.Manager, users: managers },
+    { role: UserRole.Admin, users: managers },
     { role: UserRole.Scanner, users: scanners },
   ];
 
