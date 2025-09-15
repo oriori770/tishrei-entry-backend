@@ -4,7 +4,7 @@ import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import dotenv from "dotenv";
 import { connectDB } from "./config/database";
-
+import seedUsers from "utils/seedData";
 // Import routes
 import authRoutes from "./routes/auth";
 import participantRoutes from "./routes/participants";
@@ -134,6 +134,7 @@ const startServer = async () => {
   try {
     // Connect to database
     await connectDB();
+    await seedUsers();
 
     // Start listening
     app.listen(PORT, () => {
