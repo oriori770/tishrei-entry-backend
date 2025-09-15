@@ -101,4 +101,4 @@ async function seedUsers() {
   }
 }
 
-export default seedData;
+export default seedUsers;
