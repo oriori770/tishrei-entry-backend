@@ -63,63 +63,41 @@ import { UserRole, GroupType } from '../types';
   }
 };*/
 
-
-const usersToSeed = [
-  {
-    username: 'admin',
-    password: 'admin770',
-    name: 'מנהל ראשי',
-    role: UserRole.Admin,
-    isActive: true,
-  },
-  {
-    username: 'scanner',
-    password: 'scanner770',
-    name: 'סורק ראשי',
-    role: UserRole.Scanner,
-    isActive: true,
-  },
-  {
-    username: 'guest',
-    password: 'guest123',
-    name: 'משתמש אורח',
-    role: UserRole.Viewer,
-    isActive: true,
-  },
+const managers = [
+  { username: "witzenhandler", name: "מושקי ויצהנדלר" },
+  { username: "yarel", name: "אילה יראל" },
+  { username: "blili", name: "חני בלילי" },
+  { username: "benisti", name: "מושקא בניסטי" },
+  { username: "lalum", name: "אלונה ללום" },
+  { username: "lerner", name: "גאולה לרנר" },
+  { username: "achotshri", name: "מוקד אחותשרי" },
 ];
 
-// פונקציה עיקרית שמבצעת את ה-seeding
-const seedData = async () => {
-  try {
-    console.log('🌱 Starting user seeding...');
+const scanners: { username: string; name: string }[] = [];
 
-    await connectDB();
+async function seedUsers() {
+  const usersByRole: { role: UserRole; users: { username: string; name: string }[] }[] = [
+    { role: UserRole.Manager, users: managers },
+    { role: UserRole.Scanner, users: scanners },
+  ];
 
-    for (const userData of usersToSeed) {
-      const exists = await UserModel.findOne({ username: userData.username });
+  for (const { role, users } of usersByRole) {
+    for (const user of users) {
+      const exists = await UserModel.findOne({ username: user.username });
       if (exists) {
-        console.log(`ℹ️ User "${userData.username}" already exists, skipping`);
+        console.log(`ℹ️ User "${user.username}" already exists, skipping`);
       } else {
-        const newUser = new UserModel(userData);
+        const newUser = new UserModel({
+          ...user,
+          role,
+          isActive: true,
+          password: process.env.DEFAULT_USER_PASSWORD!, // סיסמה אחידה לכולם
+        });
         await newUser.save();
-        console.log(`✅ User "${userData.username}" created`);
+        console.log(`✅ User "${user.username}" created (role: ${role})`);
       }
     }
-
-    console.log('🎉 User seeding completed successfully!');
-  } catch (error) {
-    console.error('❌ Error seeding users:', error);
-  } finally {
-    await disconnectDB();
-    process.exit(0);
   }
-};
-
-
-
-// הרצה ישירה דרך node
-if (require.main === module) {
-  seedData();
 }
 
 export default seedData;
