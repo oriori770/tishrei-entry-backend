@@ -134,7 +134,7 @@ const startServer = async () => {
   try {
     // Connect to database
     await connectDB();
-    await seedUsers();
+    //await seedUsers();
 
     // Start listening
     app.listen(PORT, () => {
