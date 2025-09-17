@@ -65,28 +65,24 @@ export const getAllEntriesByBucket = async (_req: Request, res: Response) => {
 export const getEventAttendance = async (
   req: Request,
   res: Response
-): Promise<void> =>
-{
+): Promise<void> => {
   try {
     const { eventId } = req.params;
     const event = await EventModel.findById(eventId);
 
     if (!event) {
-      return res.status(404).json({ error: "Event not found" });
+      res.status(404).json({ error: "Event not found" });
+      return; // מספיק פשוט לצאת
     }
 
-    // משתתפים שנרשמו עד מועד האירוע
-    const totalRegistered = await Participant.countDocuments({
+    const totalRegistered = await ParticipantModel.countDocuments({
       createdAt: { $lte: event.date },
     });
 
-    // כניסות בפועל
     const totalEntered = await EventModel.countDocuments({ eventId: event._id });
 
     const percent =
-      totalRegistered > 0
-        ? (totalEntered / totalRegistered) * 100
-        : 0;
+      totalRegistered > 0 ? (totalEntered / totalRegistered) * 100 : 0;
 
     res.json({
       eventId: event._id,
