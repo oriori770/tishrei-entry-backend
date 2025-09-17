@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
 import { EntryModel } from '../models/Entry';
-import { EventModel } from '../models/event';
+import { EventModel } from '../models/Event';
+import { ParticipantModel } from '../models/Participant';
 const BUCKET_SIZE = 1000 * 60 * 5; // 5 דקות
 
 /**
@@ -61,7 +62,11 @@ export const getAllEntriesByBucket = async (_req: Request, res: Response) => {
   }
 };
 // אחוז נוכחות לאירוע בודד
-export const getEventAttendance = async (req: Request, res: Response) => {
+export const getEventAttendance = async (
+  req: Request,
+  res: Response
+): Promise<void> =>
+{
   try {
     const { eventId } = req.params;
     const event = await EventModel.findById(eventId);
