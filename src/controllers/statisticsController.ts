@@ -102,7 +102,7 @@ export const getEventAttendance = async (
 };
 
 // אחוזי נוכחות לכל האירועים
-export const getEventsAttendance = = async (
+export const getEventsAttendance = async (
   req: Request,
   res: Response
 ): Promise<void> =>
