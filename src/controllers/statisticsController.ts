@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
-import Entry from "../models/Entry";
+import { EntryModel } from '../models/Entry';
 
 const BUCKET_SIZE = 1000 * 60 * 5; // 5 דקות
 
