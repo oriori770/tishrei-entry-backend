@@ -102,13 +102,17 @@ export const getEventAttendance = async (
 };
 
 // אחוזי נוכחות לכל האירועים
-export const getEventsAttendance = async (_req: Request, res: Response) => {
+export const getEventsAttendance = = async (
+  req: Request,
+  res: Response
+): Promise<void> =>
+{
   try {
     const events = await EventModel.find({ isPast: true }).lean();
 
     const results = await Promise.all(
       events.map(async (event) => {
-        const totalRegistered = await Participant.countDocuments({
+        const totalRegistered = await ParticipantModel.countDocuments({
           createdAt: { $lte: event.date },
         });
 
