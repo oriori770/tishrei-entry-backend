@@ -1,21 +1,27 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
 import { EntryModel } from '../models/Entry';
-
+import { EventModel } from '../models/event';
 const BUCKET_SIZE = 1000 * 60 * 5; // 5 דקות
 
 /**
  * כניסות לפי אירוע מסוים (ללא קיבוץ)
  */
-export const getEventEntries = async (req: Request, res: Response) => {
+export const getEventEntries = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   const { eventId } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(eventId)) {
-    return res.status(400).json({ error: "Invalid eventId" });
+    res.status(400).json({ error: "Invalid eventId" });
+    return;
   }
 
   try {
-    const entries = await Entry.find({ eventId: new mongoose.Types.ObjectId(eventId) })
+    const entries = await EntryModel.find({
+      eventId: new mongoose.Types.ObjectId(eventId),
+    })
       .select("entryTime participantId method")
       .sort({ entryTime: 1 });
 
@@ -31,7 +37,7 @@ export const getEventEntries = async (req: Request, res: Response) => {
  */
 export const getAllEntriesByBucket = async (_req: Request, res: Response) => {
   try {
-    const buckets = await Entry.aggregate([
+    const buckets = await EntryModel.aggregate([
       {
         $group: {
           _id: {
@@ -58,7 +64,7 @@ export const getAllEntriesByBucket = async (_req: Request, res: Response) => {
 export const getEventAttendance = async (req: Request, res: Response) => {
   try {
     const { eventId } = req.params;
-    const event = await Event.findById(eventId);
+    const event = await EventModel.findById(eventId);
 
     if (!event) {
       return res.status(404).json({ error: "Event not found" });
@@ -70,7 +76,7 @@ export const getEventAttendance = async (req: Request, res: Response) => {
     });
 
     // כניסות בפועל
-    const totalEntered = await Entry.countDocuments({ eventId: event._id });
+    const totalEntered = await EventModel.countDocuments({ eventId: event._id });
 
     const percent =
       totalRegistered > 0
@@ -93,7 +99,7 @@ export const getEventAttendance = async (req: Request, res: Response) => {
 // אחוזי נוכחות לכל האירועים
 export const getEventsAttendance = async (_req: Request, res: Response) => {
   try {
-    const events = await Event.find({ isPast: true }).lean();
+    const events = await EventModel.find({ isPast: true }).lean();
 
     const results = await Promise.all(
       events.map(async (event) => {
@@ -101,7 +107,7 @@ export const getEventsAttendance = async (_req: Request, res: Response) => {
           createdAt: { $lte: event.date },
         });
 
-        const totalEntered = await Entry.countDocuments({ eventId: event._id });
+        const totalEntered = await EntryModel.countDocuments({ eventId: event._id });
 
         const percent =
           totalRegistered > 0
