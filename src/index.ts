@@ -12,7 +12,7 @@ import eventRoutes from "./routes/events";
 import entryRoutes from "./routes/entries";
 import userRoutes from "./routes/users";
 import logRoutes from "./routes/logs";
-
+import statisticsRoutes from "./routes/statistics";
 // Load environment variables
 dotenv.config();
 
@@ -103,6 +103,7 @@ app.use("/api/events", eventRoutes);
 app.use("/api/entries", entryRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/logs", logRoutes);
+app.use("/api/statistics", statisticsRoutes);
 
 // 404 handler
 app.use("*", (req, res) => {
