@@ -3,10 +3,33 @@ import { EntryModel } from "../models/Entry";
 import { EventModel } from "../models/Event";
 import { ParticipantModel } from "../models/Participant";
 
+// טיפוס לכניסה בודדת
+export interface EventEntry {
+  entryTime: Date;
+  participantId: mongoose.Types.ObjectId;
+  method: string;
+}
+
+// טיפוס ל־Bucket
+export interface EntryBucket {
+  _id: Date;
+  count: number;
+}
+
+// טיפוס לאחוזי נוכחות
+export interface AttendanceResult {
+  eventId: mongoose.Types.ObjectId;
+  name: string;
+  date: Date;
+  totalRegistered: number;
+  totalEntered: number;
+  percent: string; // מחרוזת עם 2 ספרות אחרי הנקודה
+}
+
 const BUCKET_SIZE = 1000 * 60 * 5; // 5 דקות
 
 export const statisticsService = {
-  async getEventEntries(eventId: string) {
+  async getEventEntries(eventId: string): Promise<EventEntry[]> {
     if (!mongoose.Types.ObjectId.isValid(eventId)) {
       throw new Error("Invalid eventId");
     }
@@ -15,11 +38,12 @@ export const statisticsService = {
       eventId: new mongoose.Types.ObjectId(eventId),
     })
       .select("entryTime participantId method")
-      .sort({ entryTime: 1 });
+      .sort({ entryTime: 1 })
+      .lean<EventEntry[]>(); // lean מחזיר אובייקט רגיל
   },
 
-  async getAllEntriesByBucket() {
-    return EntryModel.aggregate([
+  async getAllEntriesByBucket(): Promise<EntryBucket[]> {
+    return EntryModel.aggregate<EntryBucket>([
       {
         $group: {
           _id: {
@@ -37,7 +61,7 @@ export const statisticsService = {
     ]);
   },
 
-  async getEventAttendance(eventId: string) {
+  async getEventAttendance(eventId: string): Promise<AttendanceResult> {
     const event = await EventModel.findById(eventId);
 
     if (!event) {
@@ -63,7 +87,7 @@ export const statisticsService = {
     };
   },
 
-  async getEventsAttendance() {
+  async getEventsAttendance(): Promise<AttendanceResult[]> {
     const events = await EventModel.find({ isPast: true }).lean();
 
     return Promise.all(
@@ -86,7 +110,7 @@ export const statisticsService = {
           totalRegistered,
           totalEntered,
           percent: percent.toFixed(2),
-        };
+        } as AttendanceResult;
       })
     );
   },
