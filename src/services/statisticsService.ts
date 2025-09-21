@@ -68,7 +68,7 @@ export const statisticsService = {
   },
 
   async getEventAttendance(eventId: string): Promise<AttendanceResult> {
-    const events = await EventModel.find({ isPast: true }).lean<EventLean[]>();
+    const event = await EventModel.findById(eventId).lean<EventLean | null>();
     if (!event) {
       throw new Error("Event not found");
     }
@@ -93,7 +93,7 @@ export const statisticsService = {
   },
 
   async getEventsAttendance(): Promise<AttendanceResult[]> {
-    const events = await EventModel.find({ isPast: true }).lean();
+    const events = await EventModel.find({ isPast: true }).lean<EventLean[]>();
 
     return Promise.all(
       events.map(async (event) => {
