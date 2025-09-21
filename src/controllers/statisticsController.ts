@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import { statisticsService, EventEntry, EntryBucket, AttendanceResult } from "../services/statisticsService";
 
-export const statisticsController = {
-  async getEventEntries(req: Request, res: Response): Promise<void> {
+
+export const getEventEntries = async (req: Request, res: Response): Promise<void> => {
     try {
       const entries: EventEntry[] = await statisticsService.getEventEntries(req.params.eventId);
       res.json(entries);
@@ -14,9 +14,9 @@ export const statisticsController = {
         res.status(500).json({ error: "Failed to fetch event entries" });
       }
     }
-  },
+  };
 
-  async getAllEntriesByBucket(_req: Request, res: Response): Promise<void> {
+export const getAllEntriesByBucket = async (_req: Request, res: Response): Promise<void> => {
     try {
       const buckets: EntryBucket[] = await statisticsService.getAllEntriesByBucket();
       res.json(buckets);
@@ -24,9 +24,9 @@ export const statisticsController = {
       console.error(err);
       res.status(500).json({ error: "Failed to fetch all entries by bucket" });
     }
-  },
+  };
 
-  async getEventAttendance(req: Request, res: Response): Promise<void> {
+export const getEventAttendance = async (req: Request, res: Response): Promise<void> => {
     try {
       const result: AttendanceResult = await statisticsService.getEventAttendance(req.params.eventId);
       res.json(result);
@@ -38,9 +38,9 @@ export const statisticsController = {
         res.status(500).json({ error: "Failed to calculate attendance" });
       }
     }
-  },
+  };
 
-  async getEventsAttendance(_req: Request, res: Response): Promise<void> {
+export const getEventsAttendance = async (_req: Request, res: Response): Promise<void> => {
     try {
       const results: AttendanceResult[] = await statisticsService.getEventsAttendance();
       res.json(results);
@@ -48,5 +48,4 @@ export const statisticsController = {
       console.error(error);
       res.status(500).json({ error: "Failed to calculate attendance for events" });
     }
-  },
 };
