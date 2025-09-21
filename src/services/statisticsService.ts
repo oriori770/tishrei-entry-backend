@@ -6,7 +6,7 @@ import { ParticipantModel } from "../models/Participant";
 // טיפוס לכניסה בודדת
 export interface EventEntry {
   entryTime: Date;
-  participantId: mongoose.Types.ObjectId | string;
+  participantId: mongoose.Types.ObjectId;
   method: string;
 }
 
@@ -18,12 +18,18 @@ export interface EntryBucket {
 
 // טיפוס לאחוזי נוכחות
 export interface AttendanceResult {
-  eventId: mongoose.Types.ObjectId | string;
+  eventId: mongoose.Types.ObjectId ;
   name: string;
   date: Date;
   totalRegistered: number;
   totalEntered: number;
   percent: string; // מחרוזת עם 2 ספרות אחרי הנקודה
+}
+interface EventLean {
+  _id: mongoose.Types.ObjectId;
+  name: string;
+  date: Date;
+  isPast: boolean;
 }
 
 const BUCKET_SIZE = 1000 * 60 * 5; // 5 דקות
@@ -62,8 +68,7 @@ export const statisticsService = {
   },
 
   async getEventAttendance(eventId: string): Promise<AttendanceResult> {
-    const event = await EventModel.findById(eventId);
-
+    const events = await EventModel.find({ isPast: true }).lean<EventLean[]>();
     if (!event) {
       throw new Error("Event not found");
     }
