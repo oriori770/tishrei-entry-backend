@@ -1,137 +1,52 @@
 import { Request, Response } from "express";
-import mongoose from "mongoose";
-import { EntryModel } from '../models/Entry';
-import { EventModel } from '../models/Event';
-import { ParticipantModel } from '../models/Participant';
-const BUCKET_SIZE = 1000 * 60 * 5; // 5 דקות
+import { statisticsService, EventEntry, EntryBucket, AttendanceResult } from "../services/statisticsService";
 
-/**
- * כניסות לפי אירוע מסוים (ללא קיבוץ)
- */
-export const getEventEntries = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  const { eventId } = req.params;
-
-  if (!mongoose.Types.ObjectId.isValid(eventId)) {
-    res.status(400).json({ error: "Invalid eventId" });
-    return;
-  }
-
-  try {
-    const entries = await EntryModel.find({
-      eventId: new mongoose.Types.ObjectId(eventId),
-    })
-      .select("entryTime participantId method")
-      .sort({ entryTime: 1 });
-
-    res.json(entries);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to fetch event entries" });
-  }
-};
-
-/**
- * כניסות מכל האירועים יחד, בקיבוץ של 5 דקות
- */
-export const getAllEntriesByBucket = async (_req: Request, res: Response) => {
-  try {
-    const buckets = await EntryModel.aggregate([
-      {
-        $group: {
-          _id: {
-            $toDate: {
-              $subtract: [
-                { $toLong: "$entryTime" },
-                { $mod: [{ $toLong: "$entryTime" }, BUCKET_SIZE] }
-              ]
-            }
-          },
-          count: { $sum: 1 }
-        }
-      },
-      { $sort: { _id: 1 } }
-    ]);
-
-    res.json(buckets);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to fetch all entries by bucket" });
-  }
-};
-// אחוז נוכחות לאירוע בודד
-export const getEventAttendance = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  try {
-    const { eventId } = req.params;
-    const event = await EventModel.findById(eventId);
-
-    if (!event) {
-      res.status(404).json({ error: "Event not found" });
-      return; // מספיק פשוט לצאת
+export const statisticsController = {
+  async getEventEntries(req: Request, res: Response): Promise<void> {
+    try {
+      const entries: EventEntry[] = await statisticsService.getEventEntries(req.params.eventId);
+      res.json(entries);
+    } catch (err: any) {
+      if (err.message === "Invalid eventId") {
+        res.status(400).json({ error: err.message });
+      } else {
+        console.error(err);
+        res.status(500).json({ error: "Failed to fetch event entries" });
+      }
     }
+  },
 
-    const totalRegistered = await ParticipantModel.countDocuments({
-      createdAt: { $lte: event.date },
-    });
+  async getAllEntriesByBucket(_req: Request, res: Response): Promise<void> {
+    try {
+      const buckets: EntryBucket[] = await statisticsService.getAllEntriesByBucket();
+      res.json(buckets);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: "Failed to fetch all entries by bucket" });
+    }
+  },
 
-    const totalEntered = await EventModel.countDocuments({ eventId: event._id });
+  async getEventAttendance(req: Request, res: Response): Promise<void> {
+    try {
+      const result: AttendanceResult = await statisticsService.getEventAttendance(req.params.eventId);
+      res.json(result);
+    } catch (error: any) {
+      if (error.message === "Event not found") {
+        res.status(404).json({ error: error.message });
+      } else {
+        console.error(error);
+        res.status(500).json({ error: "Failed to calculate attendance" });
+      }
+    }
+  },
 
-    const percent =
-      totalRegistered > 0 ? (totalEntered / totalRegistered) * 100 : 0;
-
-    res.json({
-      eventId: event._id,
-      name: event.name,
-      date: event.date,
-      totalRegistered,
-      totalEntered,
-      percent: percent.toFixed(2),
-    });
-  } catch (error) {
-    res.status(500).json({ error: "Failed to calculate attendance" });
-  }
-};
-
-// אחוזי נוכחות לכל האירועים
-export const getEventsAttendance = async (
-  req: Request,
-  res: Response
-): Promise<void> =>
-{
-  try {
-    const events = await EventModel.find({ isPast: true }).lean();
-
-    const results = await Promise.all(
-      events.map(async (event) => {
-        const totalRegistered = await ParticipantModel.countDocuments({
-          createdAt: { $lte: event.date },
-        });
-
-        const totalEntered = await EntryModel.countDocuments({ eventId: event._id });
-
-        const percent =
-          totalRegistered > 0
-            ? (totalEntered / totalRegistered) * 100
-            : 0;
-
-        return {
-          eventId: event._id,
-          name: event.name,
-          date: event.date,
-          totalRegistered,
-          totalEntered,
-          percent: percent.toFixed(2),
-        };
-      })
-    );
-
-    res.json(results);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to calculate attendance for events" });
-  }
+  async getEventsAttendance(_req: Request, res: Response): Promise<void> {
+    try {
+      const results: AttendanceResult[] = await statisticsService.getEventsAttendance();
+      res.json(results);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Failed to calculate attendance for events" });
+    }
+  },
 };
