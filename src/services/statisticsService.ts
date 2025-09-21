@@ -93,30 +93,31 @@ export const statisticsService = {
   },
 
   async getEventsAttendance(): Promise<AttendanceResult[]> {
-    const events = await EventModel.find({ isPast: true }).lean<EventLean[]>();
+  // מוציאים את כל האירועים, גם עבריים וגם עתידיים
+  const events = await EventModel.find({}).lean<EventLean[]>();
 
-    return Promise.all(
-      events.map(async (event) => {
-        const totalRegistered = await ParticipantModel.countDocuments({
-          createdAt: { $lte: event.date },
-        });
+  return Promise.all(
+    events.map(async (event) => {
+      const totalRegistered = await ParticipantModel.countDocuments({
+        createdAt: { $lte: event.date },
+      });
 
-        const totalEntered = await EntryModel.countDocuments({
-          eventId: event._id,
-        });
+      const totalEntered = await EntryModel.countDocuments({
+        eventId: event._id,
+      });
 
-        const percent =
-          totalRegistered > 0 ? (totalEntered / totalRegistered) * 100 : 0;
+      const percent =
+        totalRegistered > 0 ? (totalEntered / totalRegistered) * 100 : 0;
 
-        return {
-          eventId: event._id,
-          name: event.name,
-          date: event.date,
-          totalRegistered,
-          totalEntered,
-          percent: percent.toFixed(2),
-        } as AttendanceResult;
-      })
-    );
-  },
+      return {
+        eventId: event._id,
+        name: event.name,
+        date: event.date,
+        totalRegistered,
+        totalEntered,
+        percent: percent.toFixed(2),
+      } as AttendanceResult;
+    })
+  );
+},
 };
