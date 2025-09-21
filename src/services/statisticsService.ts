@@ -6,7 +6,7 @@ import { ParticipantModel } from "../models/Participant";
 // טיפוס לכניסה בודדת
 export interface EventEntry {
   entryTime: Date;
-  participantId: mongoose.Types.ObjectId;
+  participantId: mongoose.Types.ObjectId | string;
   method: string;
 }
 
@@ -18,7 +18,7 @@ export interface EntryBucket {
 
 // טיפוס לאחוזי נוכחות
 export interface AttendanceResult {
-  eventId: mongoose.Types.ObjectId;
+  eventId: mongoose.Types.ObjectId | string;
   name: string;
   date: Date;
   totalRegistered: number;
