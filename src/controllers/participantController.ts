@@ -4,9 +4,13 @@ import { ApiResponse, PaginationParams, PaginatedResponse } from '../types';
 
 export const getAllParticipantsWithPaginationAndSearch = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { page = 1, limit = 10, sortBy = 'createdAt', sortOrder = 'desc', search } = req.query as PaginationParams & { search?: string };
+    const { page = 1, limit = 10, sortBy = 'createdAt', sortOrder = 'desc', search, isApproved } = req.query as PaginationParams & { search?: string; isApproved?: string };
 
     const query: any = {};
+    
+    if (isApproved !== undefined) {
+      query.isApproved = isApproved === 'true';
+    }
     
     // Search functionality
     if (search) {
@@ -59,15 +63,21 @@ export const getAllParticipantsWithPaginationAndSearch = async (req: Request, re
 
 export const getAllParticipants = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { sortBy = "createdAt", sortOrder = "desc" } = req.query as {
+    const { sortBy = "createdAt", sortOrder = "desc", isApproved } = req.query as {
       sortBy?: string;
       sortOrder?: string;
+      isApproved?: string;
     };
+
+    const query: any = {};
+    if (isApproved !== undefined) {
+      query.isApproved = isApproved === 'true';
+    }
 
     const sort: any = { [sortBy]: sortOrder === "desc" ? -1 : 1 };
 
     // מחזיר את כולם, בלי חיפוש ובלי עמודים
-    const participants = await ParticipantModel.find().sort(sort);
+    const participants = await ParticipantModel.find(query).sort(sort);
 
     const response: ApiResponse<any[]> = {
       success: true,

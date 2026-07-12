@@ -9,6 +9,7 @@ export interface Participant extends Document {
   phone: string;
   city?: string;
   groupType: GroupType;
+  isApproved: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -45,6 +46,10 @@ const participantSchema = new Schema<ParticipantDocument>({
     type: String,
     //enum: Object.values(GroupType),
     required: [true, 'סוג קבוצה הוא שדה חובה']
+  },
+  isApproved: {
+    type: Boolean,
+    default: false
   }
 }, {
   timestamps: true,
@@ -54,6 +59,7 @@ const participantSchema = new Schema<ParticipantDocument>({
 
 // Indexes for better performance
 participantSchema.index({ phone: 1 }, { unique: true });
+participantSchema.index({ isApproved: 1 });
 
 // Virtual for full name
 participantSchema.virtual('fullName').get(function() {

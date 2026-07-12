@@ -101,6 +101,7 @@ Authorization: Bearer <token>
 - `sortBy` (string, default: 'createdAt')
 - `sortOrder` (string, 'asc' | 'desc', default: 'desc')
 - `search` (string) - Search in name, family, barcode, email, city
+- `isApproved` (boolean) - Filter by approval status (`true` / `false`)
 
 **Response:**
 ```json
@@ -119,6 +120,7 @@ Authorization: Bearer <token>
         "schoolClass": "י\"ב",
         "branch": "סניף מרכז",
         "groupType": "תיכון",
+        "isApproved": false,
         "fullName": "ישראל כהן",
         "createdAt": "2024-01-01T00:00:00.000Z",
         "updatedAt": "2024-01-01T00:00:00.000Z"
@@ -154,9 +156,13 @@ Authorization: Bearer <token>
   "city": "ירושלים",
   "schoolClass": "י\"ב",
   "branch": "סניף מרכז",
-  "groupType": "תיכון"
+  "groupType": "תיכון",
+  "isApproved": false
 }
 ```
+
+**Notes:**
+- `isApproved` defaults to `false` if not provided on creation.
 
 ### Update Participant (Admin Only)
 **PUT** `/participants/:id`
@@ -222,6 +228,9 @@ Authorization: Bearer <token>
 }
 ```
 
+**Error Responses:**
+- `403` - Participant is not approved (`משתתפת לא מאושרת לכניסה`)
+
 ### Create Entry by Barcode (Scanner/Admin)
 **POST** `/entries/barcode`
 
@@ -233,6 +242,9 @@ Authorization: Bearer <token>
   "method": "barcode"
 }
 ```
+
+**Error Responses:**
+- `403` - Participant is not approved (`משתתפת לא מאושרת לכניסה`)
 
 **Response:**
 ```json

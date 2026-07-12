@@ -29,6 +29,14 @@ export const createEntry = async (req: any, res: Response): Promise<void> => {
       return;
     }
 
+    if (!participant.isApproved) {
+      res.status(403).json({
+        success: false,
+        error: 'משתתפת לא מאושרת לכניסה'
+      });
+      return;
+    }
+
     // Check if event exists and is active
     const event = await EventModel.findById(eventId);
     if (!event) {
@@ -112,6 +120,14 @@ export const createEntryByBarcode = async (req: any, res: Response): Promise<voi
       res.status(404).json({
         success: false,
         error: 'משתתף לא נמצא'
+      });
+      return;
+    }
+
+    if (!participant.isApproved) {
+      res.status(403).json({
+        success: false,
+        error: 'משתתפת לא מאושרת לכניסה'
       });
       return;
     }

@@ -25,6 +25,7 @@ export interface Participant {
   schoolClass: string;
   branch: string;
   groupType: GroupType;
+  isApproved: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }
