@@ -19,9 +19,11 @@ function getEnv(name: string): string {
 
 export const connectDB = async (): Promise<void> => {
   try {
-    await mongoose.connect(MONGODB_URI);
+    await mongoose.connect(MONGODB_URI, {
+      tlsAllowInvalidCertificates: true
+    });
     console.log('✅ MongoDB connected successfully');
-  } catch (error) {
+  } catch (error: any) {
     console.error('❌ MongoDB connection error:', error);
     console.error('MONGODB_URI:', MONGODB_URI);
     process.exit(1);
