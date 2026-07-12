@@ -57,36 +57,35 @@ userSchema.index({ role: 1 });
 userSchema.index({ isActive: 1 });
 
 // Hash password before saving
-userSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) return next();
-  
-  try {
-    const salt = await bcrypt.genSalt(12);
-    this.password = await bcrypt.hash(this.password, salt);
-    next();
-  } catch (error) {
-    next(error as Error);
-  }
+userSchema.pre('save', async function () {
+  if (!this.isModified('password')) return;
+
+  const salt = await bcrypt.genSalt(12);
+  this.password = await bcrypt.hash(this.password, salt);
 });
 
+
 // Method to compare password
-userSchema.methods.comparePassword = async function(candidatePassword: string): Promise<boolean> {
+userSchema.methods.comparePassword = async function (
+  candidatePassword: string
+): Promise<boolean> {
   return bcrypt.compare(candidatePassword, this.password);
 };
 
-// Pre-save middleware to ensure unique username
-userSchema.pre('save', async function(next) {
-  if (this.isModified('username')) {
-    const existingUser = await mongoose.model('User').findOne({ 
-      username: this.username,
-      _id: { $ne: this._id }
-    });
-    
-    if (existingUser) {
-      throw new Error('שם משתמש זה כבר קיים במערכת');
-    }
+
+// Ensure unique username
+userSchema.pre('save', async function () {
+  if (!this.isModified('username')) return;
+
+  const existingUser = await mongoose.model<UserDocument>('User').findOne({
+    username: this.username,
+    _id: { $ne: this._id }
+  });
+
+  if (existingUser) {
+    throw new Error('שם משתמש זה כבר קיים במערכת');
   }
-  next();
 });
 
-export const UserModel = mongoose.model<UserDocument>('User', userSchema); 
+
+export const UserModel = mongoose.model<UserDocument>('User', userSchema);

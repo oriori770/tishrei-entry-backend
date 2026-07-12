@@ -1,8 +1,10 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import dns from 'dns';
 
 dotenv.config();
 
+dns.setServers(['8.8.8.8', '1.1.1.1']);
 
 
 function getEnv(name: string): string {
@@ -21,6 +23,7 @@ export const connectDB = async (): Promise<void> => {
     console.log('✅ MongoDB connected successfully');
   } catch (error) {
     console.error('❌ MongoDB connection error:', error);
+    console.error('MONGODB_URI:', MONGODB_URI);
     process.exit(1);
   }
 };

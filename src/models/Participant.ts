@@ -2,7 +2,7 @@ import mongoose, { Schema, Document } from 'mongoose';
 import { GroupType } from '../types';
 import { v4 as uuidv4 } from 'uuid';
 
-export interface Participant extends Document {
+export interface Participant {
   name: string;
   family: string;
   barcode: string;
@@ -66,11 +66,10 @@ participantSchema.virtual('fullName').get(function() {
   return `${this.name} ${this.family}`;
 });
 
-participantSchema.pre('save', function (next) {
+participantSchema.pre('save', function () {
   if (!this.barcode) {
-    this.barcode = uuidv4(); // שמור רק UUID
+    this.barcode = uuidv4();
   }
-  next();
 });
 
 export const ParticipantModel = mongoose.model<ParticipantDocument>('Participant', participantSchema); 

@@ -62,18 +62,17 @@ entrySchema.virtual('formattedEntryTime').get(function() {
 });
 
 // Pre-save middleware to check for duplicate entries
-entrySchema.pre('save', async function(next) {
-  if (this.isNew) {
-    const existingEntry = await mongoose.model('Entry').findOne({
-      participantId: this.participantId,
-      eventId: this.eventId
-    });
-    
-    if (existingEntry) {
-      throw new Error('משתתף זה כבר נכנס לאירוע זה');
-    }
+entrySchema.pre('save', async function () {
+  if (!this.isNew) return;
+
+  const existingEntry = await mongoose.model('Entry').findOne({
+    participantId: this.participantId,
+    eventId: this.eventId
+  });
+
+  if (existingEntry) {
+    throw new Error('משתתף זה כבר נכנס לאירוע זה');
   }
-  next();
 });
 
 export const EntryModel = mongoose.model<EntryDocument>('Entry', entrySchema); 
