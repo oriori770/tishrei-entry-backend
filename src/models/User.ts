@@ -24,6 +24,18 @@ const userSchema = new Schema<UserDocument>({
     required: [true, 'שם הוא שדה חובה'],
     trim: true
   },
+  email: {
+    type: String,
+    trim: true,
+    lowercase: true,
+    match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'אנא הכנס כתובת אימייל חוקית']
+  },
+  resetPasswordToken: {
+    type: String
+  },
+  resetPasswordExpires: {
+    type: Date
+  },
   role: {
     type: String,
     enum: Object.values(UserRole),
