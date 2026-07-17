@@ -150,16 +150,20 @@ const startServer = async () => {
   }
 };
 
-// Handle unhandled promise rejections
-process.on("unhandledRejection", (err: any) => {
-  console.error("Unhandled Promise Rejection:", err);
-  process.exit(1);
-});
+if (process.env.NODE_ENV !== "test") {
+  // Handle unhandled promise rejections
+  process.on("unhandledRejection", (err: any) => {
+    console.error("Unhandled Promise Rejection:", err);
+    process.exit(1);
+  });
 
-// Handle uncaught exceptions
-process.on("uncaughtException", (err: any) => {
-  console.error("Uncaught Exception:", err);
-  process.exit(1);
-});
+  // Handle uncaught exceptions
+  process.on("uncaughtException", (err: any) => {
+    console.error("Uncaught Exception:", err);
+    process.exit(1);
+  });
 
-startServer();
+  startServer();
+}
+
+export default app;
