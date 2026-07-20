@@ -1,1 +1,2 @@
-npm test
+echo "🔍 Running pre-commit checks (Backend)..."
+npx tsc --noEmit

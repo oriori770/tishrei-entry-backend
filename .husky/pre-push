@@ -1,3 +1,5 @@
 echo "🔍 Running pre-push checks (Backend)..."
-echo "1. Running tests..."
+echo "1. Testing TypeScript build..."
+npm run build
+echo "2. Running tests..."
 npm test
