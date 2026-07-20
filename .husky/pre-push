@@ -1,0 +1,3 @@
+echo "🔍 Running pre-push checks (Backend)..."
+echo "1. Running tests..."
+npm test

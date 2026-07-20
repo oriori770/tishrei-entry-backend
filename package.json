@@ -8,7 +8,8 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "test": "jest",
-    "seed": "ts-node src/utils/seedData.ts"
+    "seed": "ts-node src/utils/seedData.ts",
+    "prepare": "husky"
   },
   "keywords": [
     "qr-code",
