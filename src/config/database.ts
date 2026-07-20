@@ -9,10 +9,10 @@ dns.setServers(['8.8.8.8', '1.1.1.1']);
 
 function getEnv(name: string): string {
   const value = process.env[name];
-  if (!value) {
+  if (!value && process.env.NODE_ENV !== 'test') {
     throw new Error(`Environment variable ${name} is missing`);
   }
-  return value;
+  return value || '';
 }
 
   const MONGODB_URI = getEnv('MONGODB_URI_PROD') || 'mongodb://localhost:27017/tishrei-entry';
