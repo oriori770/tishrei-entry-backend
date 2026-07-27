@@ -4,6 +4,7 @@ import { ParticipantModel } from '../models/Participant';
 import { EventModel } from '../models/Event';
 import { UserModel } from '../models/User';
 import { ApiResponse, PaginationParams, PaginatedResponse } from '../types';
+import mongoose from 'mongoose';
 
 export const createEntry = async (req: any, res: Response): Promise<void> => {
   try {
@@ -353,7 +354,7 @@ export const getEntryStats = async (req: Request, res: Response): Promise<void> 
     const [totalEntries, entriesByMethod] = await Promise.all([
       EntryModel.countDocuments({ eventId }),
       EntryModel.aggregate([
-        { $match: { eventId: eventId } },
+        { $match: { eventId: new mongoose.Types.ObjectId(eventId) } },
         { $group: { _id: '$method', count: { $sum: 1 } } }
       ])
     ]);
