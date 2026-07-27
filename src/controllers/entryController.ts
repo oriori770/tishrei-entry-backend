@@ -55,33 +55,33 @@ export const createEntry = async (req: any, res: Response): Promise<void> => {
       return;
     }
 
-    // Check if entry already exists
-    const existingEntry = await EntryModel.findOne({
-      participantId,
-      eventId
-    });
+    // Atomic operation to prevent Race Conditions (Double-dipping)
+    // Using findOneAndUpdate with upsert ensures that if two requests arrive at the exact same millisecond,
+    // only one will succeed in creating the entry.
+    const existingEntry = await EntryModel.findOneAndUpdate(
+      { participantId, eventId },
+      { 
+        $setOnInsert: { 
+          participantId,
+          eventId,
+          scannerId,
+          method,
+          entryTime: new Date()
+        } 
+      },
+      { upsert: true, new: false } // new: false returns the old document if it existed, or null if it didn't
+    );
 
     if (existingEntry) {
-      res.status(400).json({
+      res.status(409).json({
         success: false,
         error: 'משתתף זה כבר נכנס לאירוע זה'
       });
       return;
     }
 
-    // Create entry
-    const entry = new EntryModel({
-      participantId,
-      eventId,
-      scannerId,
-      method,
-      entryTime: new Date()
-    });
-
-    await entry.save();
-
     // Populate entry with details
-    const populatedEntry = await EntryModel.findById(entry._id)
+    const populatedEntry = await EntryModel.findOne({ participantId, eventId })
       .populate('participantId')
       .populate('eventId')
       .populate('scannerId', '-password');
@@ -150,33 +150,33 @@ export const createEntryByBarcode = async (req: any, res: Response): Promise<voi
       return;
     }
 
-    // Check if entry already exists
-    const existingEntry = await EntryModel.findOne({
-      participantId: participant._id,
-      eventId
-    });
+    // Atomic operation to prevent Race Conditions (Double-dipping)
+    // Using findOneAndUpdate with upsert ensures that if two requests arrive at the exact same millisecond,
+    // only one will succeed in creating the entry.
+    const existingEntry = await EntryModel.findOneAndUpdate(
+      { participantId: participant._id, eventId },
+      { 
+        $setOnInsert: { 
+          participantId: participant._id,
+          eventId,
+          scannerId,
+          method,
+          entryTime: new Date()
+        } 
+      },
+      { upsert: true, new: false } // new: false returns the old document if it existed, or null if it didn't
+    );
 
     if (existingEntry) {
-      res.status(400).json({
+      res.status(409).json({
         success: false,
         error: 'משתתף זה כבר נכנס לאירוע זה'
       });
       return;
     }
 
-    // Create entry
-    const entry = new EntryModel({
-      participantId: participant._id,
-      eventId,
-      scannerId,
-      method,
-      entryTime: new Date()
-    });
-
-    await entry.save();
-
     // Populate entry with details
-    const populatedEntry = await EntryModel.findById(entry._id)
+    const populatedEntry = await EntryModel.findOne({ participantId: participant._id, eventId })
       .populate('participantId')
       .populate('eventId')
       .populate('scannerId', '-password');
