@@ -95,7 +95,7 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
   } catch (error: any) {
     console.error('Create user error:', error);
     
-    if (error.code === 11000) {
+    if (error.code === 11000 || error.message === 'שם משתמש זה כבר קיים במערכת') {
       res.status(400).json({
         success: false,
         error: 'שם משתמש זה כבר קיים במערכת'
