@@ -1,9 +1,95 @@
 import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
+import { OAuth2Client } from 'google-auth-library';
 import { UserModel } from '../models/User';
 import { LoginRequest, LoginResponse, ApiResponse } from '../types';
 import { sendEmail } from '../services/emailService';
+
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+async function verifyGoogleToken(token: string) {
+  const ticket = await googleClient.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+  });
+  const payload = ticket.getPayload();
+  return payload;
+}
+
+export const googleLogin = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { credential } = req.body;
+
+    if (!credential) {
+      res.status(400).json({
+        success: false,
+        error: 'נדרש token של גוגל'
+      });
+      return;
+    }
+
+    const googleUser = await verifyGoogleToken(credential);
+
+    if (!googleUser || !googleUser.email) {
+      res.status(401).json({
+        success: false,
+        error: 'התחברות באמצעות גוגל נכשלה'
+      });
+      return;
+    }
+
+    const email = googleUser.email.toLowerCase();
+
+    // Find the user in the database by email
+    const user = await UserModel.findOne({ email });
+
+    if (!user) {
+       res.status(401).json({
+         success: false,
+         error: 'משתמש לא נמצא במערכת. אנא צור קשר עם מנהל המערכת.'
+       });
+       return;
+    }
+
+    // Check if user is active
+    if (!user.isActive) {
+      res.status(401).json({
+        success: false,
+        error: 'המשתמש לא פעיל'
+      });
+      return;
+    }
+
+    // Generate JWT token
+    const token = jwt.sign(
+      { userId: user._id, role: user.role },
+      process.env.JWT_SECRET || 'fallback-secret',
+      { expiresIn: process.env.JWT_EXPIRES_IN || '24h' } as any
+    );
+
+    // Remove password from response
+    const userResponse = user.toObject() as any;
+    delete userResponse.password;
+
+    const response: ApiResponse<LoginResponse> = {
+      success: true,
+      data: {
+        token,
+        user: userResponse
+      },
+      message: 'התחברות הצליחה'
+    };
+
+    res.status(200).json(response);
+  } catch (error) {
+    console.error('Google login error:', error);
+    res.status(401).json({
+      success: false,
+      error: 'התחברות באמצעות גוגל נכשלה'
+    });
+  }
+};
 
 export const login = async (req: Request, res: Response): Promise<void> => {
   try {
