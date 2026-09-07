@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import {
-  getAllParticipants,
+  getAllParticipantsWithPaginationAndSearch,
   getParticipantById,
   createParticipant,
   updateParticipant,
@@ -15,7 +15,7 @@ const router = Router();
 router.use(authenticateToken);
 
 // Routes accessible by both admin and scanner
-router.get('/', getAllParticipants);
+router.get('/', getAllParticipantsWithPaginationAndSearch);
 router.get('/barcode/:barcode', getParticipantByBarcode);
 router.get('/:id', getParticipantById);
 

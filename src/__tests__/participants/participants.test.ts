@@ -83,8 +83,8 @@ describe('Participant Endpoints', () => {
 
       expect(res.statusCode).toBe(200);
       expect(res.body.success).toBe(true);
-      expect(res.body.data.length).toBe(1);
-      expect(res.body.data[0].name).toBe(validParticipant.name);
+      expect(res.body.data.data.length).toBe(1);
+      expect(res.body.data.data[0].name).toBe(validParticipant.name);
     });
   });
 
