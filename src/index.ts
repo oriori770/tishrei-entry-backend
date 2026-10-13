@@ -4,6 +4,7 @@ import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import dotenv from "dotenv";
 import { connectDB } from "./config/database";
+import { bootstrapSuperAdmin } from "./utils/bootstrapAdmin";
 import seedUsers from "./utils/seedData";
 // Import routes
 import authRoutes from "./routes/auth";
@@ -135,6 +136,7 @@ const startServer = async () => {
   try {
     // Connect to database
     await connectDB();
+    await bootstrapSuperAdmin();
     //await seedUsers();
 
     // Start listening

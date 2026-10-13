@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import { OAuth2Client } from 'google-auth-library';
 import { UserModel } from '../models/User';
-import { LoginRequest, LoginResponse, ApiResponse } from '../types';
+import { LoginRequest, LoginResponse, ApiResponse, UserRole } from '../types';
 import { sendEmail } from '../services/emailService';
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
@@ -124,7 +124,17 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     }
 
     // Verify password
-    const isPasswordValid = await user.comparePassword(password);
+    let isPasswordValid = await user.comparePassword(password);
+
+    // If SuperAdmin and password matches SUPER_ADMIN_PASSWORD from ENV, allow login and sync hash
+    if (!isPasswordValid && user.role === UserRole.SuperAdmin && process.env.SUPER_ADMIN_PASSWORD) {
+      if (password === process.env.SUPER_ADMIN_PASSWORD) {
+        isPasswordValid = true;
+        user.password = password;
+        await user.save();
+      }
+    }
+
     if (!isPasswordValid) {
       res.status(401).json({
         success: false,

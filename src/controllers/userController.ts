@@ -80,7 +80,32 @@ export const getUserById = async (req: Request, res: Response): Promise<void> =>
 
 export const createUser = async (req: Request, res: Response): Promise<void> => {
   try {
-    const user = new UserModel(req.body);
+    const creatorRole = (req as any).user?.role;
+    const requestedRole = req.body.role || UserRole.Scanner;
+
+    // מנהל רגיל רשאי ליצור סורקים בלבד
+    if (creatorRole === UserRole.Admin) {
+      if (requestedRole !== UserRole.Scanner) {
+        res.status(403).json({
+          success: false,
+          error: 'מנהל רגיל רשאי ליצור סורקים בלבד'
+        });
+        return;
+      }
+    } else if (creatorRole === UserRole.SuperAdmin) {
+      if (requestedRole === UserRole.SuperAdmin) {
+        res.status(400).json({
+          success: false,
+          error: 'לא ניתן ליצור מנהל כללי נוסף'
+        });
+        return;
+      }
+    }
+
+    const user = new UserModel({
+      ...req.body,
+      role: requestedRole
+    });
     await user.save();
 
     // Remove password from response
@@ -122,18 +147,10 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
 export const updateUser = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
-    const updateData = { ...req.body };
-    
-    // Don't allow password update through this endpoint
-    delete updateData.password;
-    
-    const user = await UserModel.findByIdAndUpdate(
-      id,
-      updateData,
-      { new: true, runValidators: true }
-    ).select('-password');
+    const currentUser = (req as any).user;
+    const targetUser = await UserModel.findById(id);
 
-    if (!user) {
+    if (!targetUser) {
       res.status(404).json({
         success: false,
         error: 'משתמש לא נמצא'
@@ -141,9 +158,61 @@ export const updateUser = async (req: Request, res: Response): Promise<void> => 
       return;
     }
 
+    // הגנה על מנהל כללי: רק הוא יכול לערוך את עצמו
+    if (targetUser.role === UserRole.SuperAdmin && currentUser.role !== UserRole.SuperAdmin) {
+      res.status(403).json({
+        success: false,
+        error: 'אין הרשאה לערוך מנהל כללי'
+      });
+      return;
+    }
+
+    // מנהל רגיל אינו רשאי לערוך מנהל אחר
+    if (currentUser.role === UserRole.Admin && targetUser.role === UserRole.Admin && targetUser._id.toString() !== currentUser._id.toString()) {
+      res.status(403).json({
+        success: false,
+        error: 'מנהל רגיל אינו רשאי לערוך מנהלים אחרים'
+      });
+      return;
+    }
+
+    const updateData = { ...req.body };
+    delete updateData.password;
+
+    // שינוי תפקיד
+    if (updateData.role && updateData.role !== targetUser.role) {
+      if (currentUser.role !== UserRole.SuperAdmin) {
+        res.status(403).json({
+          success: false,
+          error: 'רק מנהל כללי רשאי לשנות תפקיד'
+        });
+        return;
+      }
+      if (targetUser.role === UserRole.SuperAdmin) {
+        res.status(400).json({
+          success: false,
+          error: 'לא ניתן לשנות את התפקיד של המנהל הכללי'
+        });
+        return;
+      }
+      if (updateData.role === UserRole.SuperAdmin) {
+        res.status(400).json({
+          success: false,
+          error: 'לא ניתן לקדם משתמש למנהל כללי'
+        });
+        return;
+      }
+    }
+
+    Object.assign(targetUser, updateData);
+    await targetUser.save();
+
+    const userResponse = targetUser.toObject();
+    delete (userResponse as any).password;
+
     res.status(200).json({
       success: true,
-      data: user,
+      data: userResponse,
       message: 'משתמש עודכן בהצלחה'
     });
   } catch (error: any) {
@@ -176,15 +245,36 @@ export const updateUser = async (req: Request, res: Response): Promise<void> => 
 export const deleteUser = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
-    const user = await UserModel.findByIdAndDelete(id);
+    const currentUser = (req as any).user;
+    const targetUser = await UserModel.findById(id);
 
-    if (!user) {
+    if (!targetUser) {
       res.status(404).json({
         success: false,
         error: 'משתמש לא נמצא'
       });
       return;
     }
+
+    // לא ניתן למחוק מנהל כללי בשום מצב
+    if (targetUser.role === UserRole.SuperAdmin) {
+      res.status(403).json({
+        success: false,
+        error: 'לא ניתן למחוק את המנהל הכללי'
+      });
+      return;
+    }
+
+    // מנהל רגיל רשאי למחוק סורקים בלבד
+    if (currentUser.role === UserRole.Admin && targetUser.role !== UserRole.Scanner) {
+      res.status(403).json({
+        success: false,
+        error: 'מנהל רגיל רשאי למחוק סורקים בלבד'
+      });
+      return;
+    }
+
+    await UserModel.findByIdAndDelete(id);
 
     res.status(200).json({
       success: true,
@@ -202,12 +292,31 @@ export const deleteUser = async (req: Request, res: Response): Promise<void> => 
 export const toggleUserStatus = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
+    const currentUser = (req as any).user;
     const user = await UserModel.findById(id);
 
     if (!user) {
       res.status(404).json({
         success: false,
         error: 'משתמש לא נמצא'
+      });
+      return;
+    }
+
+    // לא ניתן להשבית מנהל כללי
+    if (user.role === UserRole.SuperAdmin) {
+      res.status(403).json({
+        success: false,
+        error: 'לא ניתן להשבית את המנהל הכללי'
+      });
+      return;
+    }
+
+    // מנהל רגיל רשאי להשבית סורקים בלבד
+    if (currentUser.role === UserRole.Admin && user.role !== UserRole.Scanner) {
+      res.status(403).json({
+        success: false,
+        error: 'מנהל רגיל רשאי להשבית סורקים בלבד'
       });
       return;
     }
@@ -235,7 +344,7 @@ export const toggleUserStatus = async (req: Request, res: Response): Promise<voi
 export const getScanners = async (req: Request, res: Response): Promise<void> => {
   try {
     const scanners = await UserModel.find({ 
-      role: { $in: [UserRole.Scanner, UserRole.Admin] },
+      role: { $in: [UserRole.Scanner, UserRole.Admin, UserRole.SuperAdmin] },
       isActive: true 
     }).select('-password');
 
@@ -256,6 +365,7 @@ export const resetUserPassword = async (req: Request, res: Response): Promise<vo
   try {
     const { id } = req.params;
     const { newPassword } = req.body;
+    const currentUser = (req as any).user;
 
     if (!newPassword || newPassword.length < 6) {
       res.status(400).json({
@@ -270,6 +380,22 @@ export const resetUserPassword = async (req: Request, res: Response): Promise<vo
       res.status(404).json({
         success: false,
         error: 'משתמש לא נמצא'
+      });
+      return;
+    }
+
+    if (user.role === UserRole.SuperAdmin && currentUser.role !== UserRole.SuperAdmin) {
+      res.status(403).json({
+        success: false,
+        error: 'אין הרשאה לאפס סיסמה למנהל כללי'
+      });
+      return;
+    }
+
+    if (currentUser.role === UserRole.Admin && user.role !== UserRole.Scanner) {
+      res.status(403).json({
+        success: false,
+        error: 'מנהל רגיל רשאי לאפס סיסמה לסורקים בלבד'
       });
       return;
     }

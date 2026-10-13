@@ -10,6 +10,7 @@ export enum GroupType {
 }
 
 export enum UserRole {
+  SuperAdmin = "superadmin",
   Admin = "admin",
   Scanner = "scanner"
 }

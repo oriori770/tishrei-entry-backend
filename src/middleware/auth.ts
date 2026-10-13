@@ -65,5 +65,6 @@ export const requireRole = (roles: UserRole[]) => {
   };
 };
 
-export const requireAdmin = requireRole([UserRole.Admin]);
-export const requireScanner = requireRole([UserRole.Scanner, UserRole.Admin]); 
+export const requireSuperAdmin = requireRole([UserRole.SuperAdmin]);
+export const requireAdmin = requireRole([UserRole.SuperAdmin, UserRole.Admin]);
+export const requireScanner = requireRole([UserRole.SuperAdmin, UserRole.Admin, UserRole.Scanner]); 
